@@ -1,4 +1,4 @@
-export SUBSCRIPTION="c7f8ca1e-46f6-4a59-a039-15eaefd2337e"
+export SUBSCRIPTION="Customer"
 export RESOURCEGROUP="dsr-kube-rg"
 export RESOURCENAME="dsrkube"
 export LOCATION="eastus"
@@ -20,5 +20,5 @@ az group create \
 az deployment group create \
     --subscription $SUBSCRIPTION \
     --resource-group $RESOURCEGROUP \
-    --template-file azuredeploy.json \
+    --template-file ./src/infrastructure/azuredeploy.json \
     --parameters name=$RESOURCENAME
