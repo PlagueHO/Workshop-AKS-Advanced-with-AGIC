@@ -57,6 +57,13 @@
             }
         },
         // Cluster features
+        "clusterAdminGroupObjectIds": {
+            "defaultValue": false,
+            "type": "array",
+            "metadata": {
+                "description": "Array of Azure AD Group object Ids to use for cluster administrators."
+            }
+        },
         "clusterEnableHttpApplicationRouting": {
             "defaultValue": false,
             "type": "bool",
@@ -295,7 +302,7 @@
         {
             "name": "[variables('clusterName')]",
             "type": "Microsoft.ContainerService/managedClusters",
-            "apiVersion": "2020-03-01",
+            "apiVersion": "2020-04-01",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "Microsoft.Resources/deployments/VirtualNetworkDeployment",
@@ -306,7 +313,9 @@
                 "enableRBAC": "[parameters('clusterEnableRbac')]",
                 "dnsPrefix": "[variables('clusterDnsPrefix')]",
                 "aadProfile": {
-                    "managed": true
+                    "managed": true,
+                    "adminGroupObjectIds": "[parameters('clusterAdminGroupObjectIds')]",
+                    "tenantId": "subscription().tenantId"
                 },
                 "addonProfiles": {
                     "httpApplicationRouting": {
