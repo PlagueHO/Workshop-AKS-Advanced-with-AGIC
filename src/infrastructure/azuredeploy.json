@@ -289,9 +289,7 @@
         },
         "workloadWindowsNodePoolWithSubnetId": "[dsr.setSubnetIdInWorkloadNodePool(parameters('workloadWindowsNodePool'), variables('defaultWindowsPoolProfile'), variables('vnetSubnetId'))]",
         "workloadLinuxNodePoolWithSubnetId": "[dsr.setSubnetIdInWorkloadNodePool(parameters('workloadLinuxNodePool'), variables('defaultLinuxPoolProfile'), variables('vnetSubnetId'))]",
-        "agentPoolProfiles": "[concat(array(variables('systemPoolProfile')), array(variables('workloadWindowsNodePoolWithSubnetId')), array(variables('workloadLinuxNodePoolWithSubnetId')))]",
-        "logAnalyticsWorkspaceId": "[concat(resourceId('Microsoft.OperationalInsights/workspaces', variables('logAnalyticsWorkspaceName')))]"
-
+        "agentPoolProfiles": "[concat(array(variables('systemPoolProfile')), array(variables('workloadWindowsNodePoolWithSubnetId')), array(variables('workloadLinuxNodePoolWithSubnetId')))]"
     },
     "resources": [
         {
@@ -319,7 +317,9 @@
                     },
                     "omsAgent": {
                         "enabled": true,
-                        "logAnalyticsWorkspaceResourceID": "[variables('logAnalyticsWorkspaceId')]"
+                        "config": {
+                            "logAnalyticsWorkspaceResourceID": "[reference('Microsoft.Resources/deployments/LogAnalyticsWorkspaceDeployment').outputs.logAnalyticsWorkspaceId.value]"
+                        }
                     }
                 },
                 "agentPoolProfiles": "[variables('agentPoolProfiles')]",
