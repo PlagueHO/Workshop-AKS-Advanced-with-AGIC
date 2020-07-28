@@ -18,4 +18,4 @@ az deployment group what-if \
     --subscription $SUBSCRIPTION \
     --resource-group $RESOURCEGROUP \
     --template-file ./src/infrastructure/azuredeploy.json \
-    --parameters name=$RESOURCENAME clusterAdminGroupObjectIds=$clusterAdminGroupObjectIds
+    --parameters "{ \"name\": {\"value\": \"$RESOURCENAME\"}, \"clusterAdminGroupObjectIds\": {\"value\": [ $clusterAdminGroupObjectIds ]}}"

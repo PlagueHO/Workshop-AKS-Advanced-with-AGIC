@@ -58,7 +58,7 @@
         },
         // Cluster features
         "clusterAdminGroupObjectIds": {
-            "defaultValue": false,
+            "defaultValue": [],
             "type": "array",
             "metadata": {
                 "description": "Array of Azure AD Group object Ids to use for cluster administrators."
@@ -348,7 +348,7 @@
                 {
                     "type": "Microsoft.ContainerService/managedClusters/providers/diagnosticSettings",
                     "apiVersion": "2017-05-01-preview",
-                    "name": "[concat('Send to ',variables('logAnalyticsWorkspaceName'))]",
+                    "name": "[concat(variables('logAnalyticsWorkspaceName'))]",
                     "dependsOn": [
                         "[variables('clusterName')]"
                     ],
