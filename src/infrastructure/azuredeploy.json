@@ -371,6 +371,10 @@
                                 "enabled": true
                             },
                             {
+                                "category": "kube-audit",
+                                "enabled": true
+                            },
+                            {
                                 "category": "kube-controller-manager",
                                 "enabled": true
                             },
