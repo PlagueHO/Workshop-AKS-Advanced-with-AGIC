@@ -628,6 +628,9 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "resourceGroup": "[resourceGroup().name]",
+            "dependsOn": [
+                "Microsoft.Resources/deployments/LogAnalyticsWorkspaceDeployment"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "expressionEvaluationOptions": {
@@ -648,6 +651,12 @@
                     },
                     "vnetSubnetPrefix": {
                         "value": "[parameters('vnetSubnetPrefix')]"
+                    },
+                    "logAnalyticsWorkspaceName": {
+                        "value": "[variables('logAnalyticsWorkspaceName')]"
+                    },
+                    "logAnalyticsWorkspaceId": {
+                        "value": "[reference('Microsoft.Resources/deployments/LogAnalyticsWorkspaceDeployment').outputs.logAnalyticsWorkspaceId.value]"
                     }
                 },
                 "template": {
@@ -667,6 +676,12 @@
                             "type": "string"
                         },
                         "vnetSubnetPrefix": {
+                            "type": "string"
+                        },
+                        "logAnalyticsWorkspaceName": {
+                            "type": "string"
+                        },
+                        "logAnalyticsWorkspaceId": {
                             "type": "string"
                         }
                     },
@@ -695,6 +710,34 @@
                                     ],
                                     "properties": {
                                         "addressPrefix": "[parameters('vnetSubnetPrefix')]"
+                                    }
+                                },
+                                {
+                                    "type": "providers/diagnosticSettings",
+                                    "apiVersion": "2017-05-01-preview",
+                                    "name": "[concat('/Microsoft.Insights/', 'Send to ', parameters('logAnalyticsWorkspaceName'))]",
+                                    "dependsOn": [
+                                        "[parameters('vnetName')]"
+                                    ],
+                                    "properties": {
+                                        "workspaceId": "[parameters('logAnalyticsWorkspaceId')]",
+                                        "metrics": [
+                                            {
+                                                "category": "AllMetrics",
+                                                "enabled": true,
+                                                "retentionPolicy": {
+                                                    "days": 0,
+                                                    "enabled": false
+                                                },
+                                                "timeGrain": null
+                                            }
+                                        ],
+                                        "logs": [
+                                            {
+                                                "category": "VMProtectionAlerts",
+                                                "enabled": true
+                                            }
+                                        ]
                                     }
                                 }
                             ]
