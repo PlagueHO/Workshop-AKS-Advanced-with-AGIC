@@ -367,24 +367,20 @@
                         ],
                         "logs": [
                             {
-                              "category": "guard",
-                              "enabled": true
+                                "category": "kube-apiserver",
+                                "enabled": true
                             },
                             {
-                              "category": "kube-apiserver",
-                              "enabled": true
+                                "category": "kube-controller-manager",
+                                "enabled": true
                             },
                             {
-                              "category": "kube-controller-manager",
-                              "enabled": true
+                                "category": "kube-scheduler",
+                                "enabled": true
                             },
                             {
-                              "category": "kube-scheduler",
-                              "enabled": true
-                            },
-                            {
-                              "category": "cluster-autoscaler",
-                              "enabled": true
+                                "category": "cluster-autoscaler",
+                                "enabled": true
                             }
                         ]
                     }
@@ -471,6 +467,9 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "resourceGroup": "[resourceGroup().name]",
+            "dependsOn": [
+                "Microsoft.Resources/deployments/LogAnalyticsWorkspaceDeployment"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "expressionEvaluationOptions": {
@@ -485,6 +484,12 @@
                     },
                     "containerRegistrySku": {
                         "value": "[parameters('containerRegistrySku')]"
+                    },
+                    "logAnalyticsWorkspaceName": {
+                        "value": "[variables('logAnalyticsWorkspaceName')]"
+                    },
+                    "logAnalyticsWorkspaceId": {
+                        "value": "[reference('Microsoft.Resources/deployments/LogAnalyticsWorkspaceDeployment').outputs.logAnalyticsWorkspaceId.value]"
                     }
                 },
                 "template": {
@@ -498,6 +503,12 @@
                             "type": "string"
                         },
                         "containerRegistrySku": {
+                            "type": "string"
+                        },
+                        "logAnalyticsWorkspaceName": {
+                            "type": "string"
+                        },
+                        "logAnalyticsWorkspaceId": {
                             "type": "string"
                         }
                     },
@@ -513,7 +524,41 @@
                             },
                             "properties": {
                                 "adminUserEnabled": false
-                            }
+                            },
+                            "resources": [
+                                {
+                                    "type": "providers/diagnosticSettings",
+                                    "apiVersion": "2017-05-01-preview",
+                                    "name": "[concat('/Microsoft.Insights/', 'Send to ', parameters('logAnalyticsWorkspaceName'))]",
+                                    "dependsOn": [
+                                        "[parameters('containerRegistryName')]"
+                                    ],
+                                    "properties": {
+                                        "workspaceId": "[parameters('logAnalyticsWorkspaceId')]",
+                                        "metrics": [
+                                            {
+                                                "category": "AllMetrics",
+                                                "enabled": true,
+                                                "retentionPolicy": {
+                                                    "days": 0,
+                                                    "enabled": false
+                                                },
+                                                "timeGrain": null
+                                            }
+                                        ],
+                                        "logs": [
+                                            {
+                                                "category": "ContainerRegistryRepositoryEvents",
+                                                "enabled": true
+                                            },
+                                            {
+                                                "category": "ContainerRegistryLoginEvents",
+                                                "enabled": true
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
                         }
                     ],
                     "outputs": {
