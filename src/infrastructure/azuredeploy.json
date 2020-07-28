@@ -346,9 +346,9 @@
             },
             "resources": [
                 {
-                    "type": "Microsoft.Insights/diagnosticSettings",
+                    "type": "providers/diagnosticSettings",
                     "apiVersion": "2017-05-01-preview",
-                    "name": "[concat(variables('clusterName'), '/Microsoft.Insights/', 'Send to ', variables('logAnalyticsWorkspaceName'))]",
+                    "name": "[concat('/Microsoft.Insights/', 'Send to ', variables('logAnalyticsWorkspaceName'))]",
                     "dependsOn": [
                         "[variables('clusterName')]"
                     ],
