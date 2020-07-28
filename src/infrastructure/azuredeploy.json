@@ -315,7 +315,7 @@
                 "aadProfile": {
                     "managed": true,
                     "adminGroupObjectIds": "[parameters('clusterAdminGroupObjectIds')]",
-                    "tenantId": "subscription().tenantId"
+                    "tenantId": "[subscription().tenantId]"
                 },
                 "addonProfiles": {
                     "httpApplicationRouting": {
