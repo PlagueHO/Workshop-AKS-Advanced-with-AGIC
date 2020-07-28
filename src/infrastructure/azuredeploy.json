@@ -343,7 +343,53 @@
             },
             "identity": {
                 "type": "SystemAssigned"
-            }
+            },
+            "resources": [
+                {
+                    "type": "Microsoft.ContainerService/managedClusters/providers/diagnosticSettings",
+                    "apiVersion": "2017-05-01-preview",
+                    "name": "[concat('Send to ',variables('logAnalyticsWorkspaceName'))]",
+                    "dependsOn": [
+                        "[variables('clusterName')]"
+                    ],
+                    "properties": {
+                        "workspaceId": "[reference('Microsoft.Resources/deployments/LogAnalyticsWorkspaceDeployment').outputs.logAnalyticsWorkspaceId.value]",
+                        "metrics": [
+                            {
+                                "category": "AllMetrics",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                },
+                                "timeGrain": null
+                            }
+                        ],
+                        "logs": [
+                            {
+                              "category": "guard",
+                              "enabled": true
+                            },
+                            {
+                              "category": "kube-apiserver",
+                              "enabled": true
+                            },
+                            {
+                              "category": "kube-controller-manager",
+                              "enabled": true
+                            },
+                            {
+                              "category": "kube-scheduler",
+                              "enabled": true
+                            },
+                            {
+                              "category": "cluster-autoscaler",
+                              "enabled": true
+                            }
+                        ]
+                    }
+                }
+            ]
         },
         {
             "name": "LogAnalyticsWorkspaceDeployment",
