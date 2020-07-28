@@ -346,22 +346,45 @@
             },
             "resources": [
                 {
-                    "type": "Microsoft.Insights/diagnosticSettings",
+                    "type": "Microsoft.ContainerService/managedClusters/providers/diagnosticSettings",
                     "apiVersion": "2017-05-01-preview",
                     "name": "[concat('Send to ',variables('logAnalyticsWorkspaceName'))]",
                     "dependsOn": [
-                        "[resourceId('Microsoft.ContainerService/managedClusters', variables('clusterName'))]"
+                        "[variables('clusterName')]"
                     ],
                     "properties": {
                         "workspaceId": "[reference('Microsoft.Resources/deployments/LogAnalyticsWorkspaceDeployment').outputs.logAnalyticsWorkspaceId.value]",
+                        "metrics": [
+                            {
+                                "category": "AllMetrics",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                },
+                                "timeGrain": null
+                            }
+                        ],
                         "logs": [
                             {
-                                "category": "AutoscaleScaleActions",
-                                "enabled": true
+                              "category": "guard",
+                              "enabled": true
                             },
                             {
-                                "category": "AutoscaleEvaluations",
-                                "enabled": true
+                              "category": "kube-apiserver",
+                              "enabled": true
+                            },
+                            {
+                              "category": "kube-controller-manager",
+                              "enabled": true
+                            },
+                            {
+                              "category": "kube-scheduler",
+                              "enabled": true
+                            },
+                            {
+                              "category": "cluster-autoscaler",
+                              "enabled": true
                             }
                         ]
                     }
