@@ -225,7 +225,7 @@
             }
         },
         "vnetSubnetName": {
-            "defaultValue": "default",
+            "defaultValue": "clusterNodesSubnet",
             "type": "string",
             "metadata": {
                 "description": "The name of the subnet of the virtual network to put the cluster nodes into."
