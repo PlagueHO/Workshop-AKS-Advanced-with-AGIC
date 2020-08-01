@@ -520,11 +520,14 @@
                     "resources": [
                         {
                             "type": "Microsoft.ContainerRegistry/registries",
-                            "apiVersion": "2019-05-01",
+                            "apiVersion": "2019-12-01-preview",
                             "name": "[parameters('containerRegistryName')]",
                             "location": "[parameters('location')]",
                             "sku": {
                                 "name": "[parameters('containerRegistrySku')]"
+                            },
+                            "identity": {
+                                "type": "SystemAssigned"
                             },
                             "properties": {
                                 "adminUserEnabled": false
