@@ -36,7 +36,7 @@
         },
         // Container Registry
         "containerRegistrySku": {
-            "defaultValue": "Standard",
+            "defaultValue": "Premium",
             "allowedValues": [
                 "Basic",
                 "Classic",
@@ -46,6 +46,20 @@
             "type": "string",
             "metadata": {
                 "description": "The SKU of the Azure Container Registry to create."
+            }
+        },
+        "containerRegistryPrivateLink": {
+            "defaultValue": true,
+            "type": "bool",
+            "metadata": {
+                "description": "Boolean flag to connect the container registry to the cluster nodes VNET using a Private Link endpoint."
+            }
+        },
+        "containerRegistryPrivateLinkDnsZoneName": {
+            "defaultValue": "privatelink.azurecr.io",
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Private Link DNS private zone."
             }
         },
         // Core cluster information
@@ -83,6 +97,28 @@
             "type": "bool",
             "metadata": {
                 "description": "boolean flag to turn on and off of RBAC"
+            }
+        },
+        // Virtual Network
+        "vnetAddressPrefix": {
+            "defaultValue": "10.0.0.0/8",
+            "type": "string",
+            "metadata": {
+                "description": "The address space of the virtual network to put the cluster nodes into."
+            }
+        },
+        "vnetSubnetName": {
+            "defaultValue": "clusterNodesSubnet",
+            "type": "string",
+            "metadata": {
+                "description": "The name of the subnet of the virtual network to put the cluster nodes into."
+            }
+        },
+        "vnetSubnetPrefix": {
+            "defaultValue": "10.240.0.0/16",
+            "type": "string",
+            "metadata": {
+                "description": "The address space of the subnet of the virtual network to put the cluster nodes into."
             }
         },
         // Cluster networking
@@ -215,34 +251,13 @@
             "metadata": {
                 "description": "The Linux workload node pool"
             }
-        },
-        // Virtual Network
-        "vnetAddressPrefix": {
-            "defaultValue": "10.0.0.0/8",
-            "type": "string",
-            "metadata": {
-                "description": "The address space of the virtual network to put the cluster nodes into."
-            }
-        },
-        "vnetSubnetName": {
-            "defaultValue": "clusterNodesSubnet",
-            "type": "string",
-            "metadata": {
-                "description": "The name of the subnet of the virtual network to put the cluster nodes into."
-            }
-        },
-        "vnetSubnetPrefix": {
-            "defaultValue": "10.240.0.0/16",
-            "type": "string",
-            "metadata": {
-                "description": "The address space of the subnet of the virtual network to put the cluster nodes into."
-            }
         }
     },
     "variables": {
         "clusterName": "[parameters('name')]",
         "vnetName": "[concat(parameters('name'),'-vnet')]",
         "containerRegistryName": "[parameters('name')]",
+        "containerRegistryPrivateLinkName": "[concat(parameters('name'),'-privatelink')]",
         "logAnalyticsWorkspaceName": "[concat(parameters('name'),'-law')]",
         "clusterDnsPrefix": "[parameters('name')]",
         "vnetSubnetId": "[concat(resourceId('Microsoft.Network/virtualNetworks', variables('vnetName')), '/subnets/', parameters('vnetSubnetName'))]",
@@ -756,6 +771,154 @@
                             "value": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName')), '/subnets/', parameters('vnetSubnetName'))]"
                         }
                     }
+                }
+            }
+        },
+        {
+            "condition": "[parameters('containerRegistryPrivateLink')]",
+            "name": "ContainerRegistryPrivateLinkDeployment",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "resourceGroup": "[resourceGroup().name]",
+            "dependsOn": [
+                "Microsoft.Resources/deployments/VirtualNetworkDeployment",
+                "Microsoft.Resources/deployments/ContainerRegistryDeployment"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "expressionEvaluationOptions": {
+                    "scope": "inner"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "vnetName": {
+                        "value": "[variables('vnetName')]"
+                    },
+                    "vnetSubnetName": {
+                        "value": "[parameters('vnetSubnetName')]"
+                    },
+                    "containerRegistryName": {
+                        "value": "[variables('containerRegistryName')]"
+                    },
+                    "containerRegistryPrivateLinkDnsZoneName": {
+                        "value": "[parameters('containerRegistryPrivateLinkDnsZoneName')]"
+                    },
+                    "containerRegistryPrivateLinkName": {
+                        "value": "[variables('containerRegistryPrivateLinkName')]"
+                    }
+                },
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "location": {
+                            "type": "string"
+                        },
+                        "vnetName": {
+                            "type": "string"
+                        },
+                        "vnetSubnetName": {
+                            "type": "string"
+                        },
+                        "containerRegistryName": {
+                            "type": "string"
+                        },
+                        "containerRegistryPrivateLinkDnsZoneName": {
+                            "type": "string"
+                        },
+                        "containerRegistryPrivateLinkName": {
+                            "type": "string"
+                        }
+                    },
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/privateDnsZones/SOA",
+                            "apiVersion": "2018-09-01",
+                            "name": "[concat(parameters('containerRegistryPrivateLinkDnsZoneName'), '/@')]",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/privateDnsZones', parameters('containerRegistryPrivateLinkDnsZoneName'))]"
+                            ],
+                            "properties": {
+                                "ttl": 3600,
+                                "soaRecord": {
+                                    "email": "azureprivatedns-host.microsoft.com",
+                                    "expireTime": 2419200,
+                                    "host": "azureprivatedns.net",
+                                    "refreshTime": 3600,
+                                    "retryTime": 300,
+                                    "serialNumber": 1,
+                                    "minimumTtl": 10
+                                }
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+                            "apiVersion": "2018-09-01",
+                            "name": "[concat(parameters('containerRegistryPrivateLinkDnsZoneName'), '/xjfvugx7v554a')]",
+                            "location": "global",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/privateDnsZones', parameters('containerRegistryPrivateLinkDnsZoneName'))]"
+                            ],
+                            "properties": {
+                                "registrationEnabled": false,
+                                "virtualNetwork": {
+                                    "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+                                }
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/privateEndpoints",
+                            "apiVersion": "2020-05-01",
+                            "name": "[parameters('containerRegistryPrivateLinkName')]",
+                            "location": "[parameters('location')]",
+                            "properties": {
+                                "privateLinkServiceConnections": [
+                                    {
+                                        "name": "[parameters('containerRegistryPrivateLinkName')]",
+                                        "properties": {
+                                            "privateLinkServiceId": "[resourceId('Microsoft.ContainerRegistry/registries', parameters('containerRegistryName'))]",
+                                            "groupIds": [
+                                                "registry"
+                                            ],
+                                            "privateLinkServiceConnectionState": {
+                                                "status": "Approved",
+                                                "description": "Auto-Approved",
+                                                "actionsRequired": "None"
+                                            }
+                                        }
+                                    }
+                                ],
+                                "manualPrivateLinkServiceConnections": [],
+                                "subnet": {
+                                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('vnetSubnetName'))]"
+                                },
+                                "customDnsConfigs": []
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+                            "apiVersion": "2020-05-01",
+                            "name": "[concat(parameters('containerRegistryPrivateLinkName'), '/', parameters('vnetSubnetName'))]",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/privateEndpoints', parameters('containerRegistryPrivateLinkName'))]",
+                                "[resourceId('Microsoft.Network/privateDnsZones', parameters('containerRegistryPrivateLinkDnsZoneName'))]"
+                            ],
+                            "properties": {
+                                "privateDnsZoneConfigs": [
+                                    {
+                                        "name": "[replace(parameters('containerRegistryPrivateLinkDnsZoneName'),'.','-')]",
+                                        "properties": {
+                                            "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', parameters('containerRegistryPrivateLinkDnsZoneName'))]"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    "outputs": {}
                 }
             }
         },
