@@ -805,7 +805,7 @@
                         {
                             "type": "Microsoft.Network/virtualNetworks/subnets/providers/roleAssignments",
                             "apiVersion": "2017-05-01",
-                            "name": "[concat(parameters('vnetName'),'/default/Microsoft.Authorization/7a650e1a-8109-469d-94b8-b4686fb9583c')]",
+                            "name": "[concat(parameters('vnetName'), '/', parameters('vnetSubnetName'), '/Microsoft.Authorization/7a650e1a-8109-469d-94b8-b4686fb9583c')]",
                             "properties": {
                                 "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '4d97b98b-1d4f-4787-a291-c67834d212e7')]",
                                 "principalId": "[reference(variables('clusterId'), '2020-03-01').identityProfile.kubeletidentity.objectId]",
