@@ -257,7 +257,7 @@
         "clusterName": "[parameters('name')]",
         "vnetName": "[concat(parameters('name'),'-vnet')]",
         "containerRegistryName": "[parameters('name')]",
-        "containerRegistryPrivateLinkName": "[concat(parameters('name'),'-privatelink')]",
+        "containerRegistryPrivateLinkName": "[concat(parameters('name'),'-ple')]",
         "logAnalyticsWorkspaceName": "[concat(parameters('name'),'-law')]",
         "clusterDnsPrefix": "[parameters('name')]",
         "vnetSubnetId": "[concat(resourceId('Microsoft.Network/virtualNetworks', variables('vnetName')), '/subnets/', parameters('vnetSubnetName'))]",
