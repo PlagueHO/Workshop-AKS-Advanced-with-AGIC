@@ -835,6 +835,21 @@
                     "variables": {},
                     "resources": [
                         {
+                            "type": "Microsoft.Network/privateDnsZones",
+                            "apiVersion": "2018-09-01",
+                            "name": "[parameters('containerRegistryPrivateLinkDnsZoneName')]",
+                            "location": "global",
+                            "properties": {
+                                "maxNumberOfRecordSets": 25000,
+                                "maxNumberOfVirtualNetworkLinks": 1000,
+                                "maxNumberOfVirtualNetworkLinksWithRegistration": 100,
+                                "numberOfRecordSets": 3,
+                                "numberOfVirtualNetworkLinks": 1,
+                                "numberOfVirtualNetworkLinksWithRegistration": 0,
+                                "provisioningState": "Succeeded"
+                            }
+                        },
+                        {
                             "type": "Microsoft.Network/privateDnsZones/SOA",
                             "apiVersion": "2018-09-01",
                             "name": "[concat(parameters('containerRegistryPrivateLinkDnsZoneName'), '/@')]",
