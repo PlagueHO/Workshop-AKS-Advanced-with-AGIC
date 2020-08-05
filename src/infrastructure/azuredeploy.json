@@ -675,6 +675,9 @@
                     },
                     "logAnalyticsWorkspaceId": {
                         "value": "[reference('Microsoft.Resources/deployments/LogAnalyticsWorkspaceDeployment').outputs.logAnalyticsWorkspaceId.value]"
+                    },
+                    "containerRegistryPrivateLink": {
+                        "value": "[parameters('containerRegistryPrivateLink')]"
                     }
                 },
                 "template": {
@@ -701,6 +704,9 @@
                         },
                         "logAnalyticsWorkspaceId": {
                             "type": "string"
+                        },
+                        "containerRegistryPrivateLink": {
+                            "type": "bool"
                         }
                     },
                     "variables": {},
@@ -727,7 +733,8 @@
                                         "[parameters('vnetName')]"
                                     ],
                                     "properties": {
-                                        "addressPrefix": "[parameters('vnetSubnetPrefix')]"
+                                        "addressPrefix": "[parameters('vnetSubnetPrefix')]",
+                                        "privateEndpointNetworkPolicies": "[if(parameters('containerRegistryPrivateLink'), 'Disabled', 'Enabled')]"
                                     }
                                 },
                                 {
