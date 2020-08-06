@@ -62,6 +62,17 @@
                 "description": "The name of the Private Link DNS private zone."
             }
         },
+        "containerRegistryPublicNetworkAccess": {
+            "defaultValue": "Enabled",
+            "allowedValues": [
+                "Enabled",
+                "Disabled"
+            ],
+            "type": "string",
+            "metadata": {
+                "description": "Specifies whether or not public network access is allowed to the container registry."
+            }
+        },
         // Core cluster information
         "kubernetesVersion": {
             "defaultValue": "1.18.4",
@@ -504,6 +515,9 @@
                     "containerRegistrySku": {
                         "value": "[parameters('containerRegistrySku')]"
                     },
+                    "containerRegistryPublicNetworkAccess": {
+                        "value": "[parameters('containerRegistryPublicNetworkAccess')]"
+                    },
                     "logAnalyticsWorkspaceName": {
                         "value": "[variables('logAnalyticsWorkspaceName')]"
                     },
@@ -529,6 +543,9 @@
                         },
                         "logAnalyticsWorkspaceId": {
                             "type": "string"
+                        },
+                        "containerRegistryPublicNetworkAccess": {
+                            "type": "string"
                         }
                     },
                     "variables": {},
@@ -547,6 +564,7 @@
                             "properties": {
                                 "adminUserEnabled": false
                             },
+                            "publicNetworkAccess": "[parameters('containerRegistryPublicNetworkAccess')]",
                             "resources": [
                                 {
                                     "type": "providers/diagnosticSettings",

@@ -1,7 +1,18 @@
+#!/bin/sh
 export SUBSCRIPTION="Customer"
 export RESOURCEGROUP="dsr-kube-rg"
-export RESOURCENAME="dsrkubey"
+export RESOURCENAME="dsrkube"
 export LOCATION="eastus"
+export ACTION="create"
+
+az feature register \
+    --subscription $SUBSCRIPTION \
+    --name AAD-V2 \
+    --namespace Microsoft.ContainerService
+
+az provider register \
+     --subscription $SUBSCRIPTION \
+     --name Microsoft.ContainerService
 
 az group create \
     --subscription $SUBSCRIPTION \
@@ -14,7 +25,10 @@ clusterAdminGroupObjectIds=$(az ad group create \
     --output JSON \
     --query objectId)
 
-az deployment group what-if \
+if $1;
+    export ACTION="what-if"
+
+az deployment group $ACTION \
     --subscription $SUBSCRIPTION \
     --resource-group $RESOURCEGROUP \
     --template-file ./src/infrastructure/azuredeploy.json \
