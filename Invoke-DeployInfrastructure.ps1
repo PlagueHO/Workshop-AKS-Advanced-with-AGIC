@@ -21,7 +21,7 @@ param (
     $WhatIf
 )
 
-Select-AzSubscription -SubscriptionName $Subscription
+Select-AzSubscription -SubscriptionName $SubscriptionName
 
 Register-AzResourceProvider `
     -ProviderNamespace 'Microsoft.ContainerService'
@@ -42,10 +42,6 @@ New-AzResourceGroupDeployment `
     -ResourceGroupName $ResourceGroupName `
     -TemplateFile './src/infrastructure/azuredeploy.json' `
     -TemplateParameterObject @{
-        name = @{
-            value = $ResourceName
-        }
-        clusterAdminGroupObjectIds = @{
-            value = @( $clusterAdminGroupObjectIds )
-        }
+        name = $ResourceName
+        clusterAdminGroupObjectIds = @( $clusterAdminGroupObjectIds )
     }
