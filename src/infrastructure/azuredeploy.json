@@ -562,9 +562,9 @@
                                 "type": "SystemAssigned"
                             },
                             "properties": {
-                                "adminUserEnabled": false
+                                "adminUserEnabled": false,
+                                "publicNetworkAccess": "[parameters('containerRegistryPublicNetworkAccess')]",
                             },
-                            "publicNetworkAccess": "[parameters('containerRegistryPublicNetworkAccess')]",
                             "resources": [
                                 {
                                     "type": "providers/diagnosticSettings",
