@@ -5,14 +5,14 @@ export RESOURCENAME="dsrkube"
 export LOCATION="eastus"
 export ACTION="create"
 
+az provider register \
+     --subscription $SUBSCRIPTION \
+     --name Microsoft.ContainerService
+
 az feature register \
     --subscription $SUBSCRIPTION \
     --name AAD-V2 \
     --namespace Microsoft.ContainerService
-
-az provider register \
-     --subscription $SUBSCRIPTION \
-     --name Microsoft.ContainerService
 
 az group create \
     --subscription $SUBSCRIPTION \
