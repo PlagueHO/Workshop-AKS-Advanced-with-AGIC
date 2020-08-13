@@ -78,7 +78,14 @@
             "defaultValue": "1.18.4",
             "type": "string",
             "metadata": {
-                "description": "The version of Kubernetes."
+                "description": "The version of Kubernetes to use for this cluster."
+            }
+        },
+        "clusterNodeResourceGroupFormat": {
+            "defaultValue": "%clusterName%_aksnodes",
+            "type": "string",
+            "metadata": {
+                "description": "The format string used to name the resource group used to contain the nodes and other Azure resources created by this cluster. `%clusterName%` is used to insert the name of the cluster."
             }
         },
         // Cluster features
@@ -266,6 +273,7 @@
     },
     "variables": {
         "clusterName": "[parameters('name')]",
+        "clusterNodeResourceGroupName": "[replace(parameters('clusterNodeResourceGroupFormat'), '%clusterName%', variables('clusterName'))]",
         "vnetName": "[concat(parameters('name'),'-vnet')]",
         "containerRegistryName": "[parameters('name')]",
         "containerRegistryPrivateLinkName": "[concat(parameters('name'),'-ple')]",
@@ -357,6 +365,7 @@
                         }
                     }
                 },
+                "nodeResourceGroup": "[variables('clusterNodeResourceGroupName')]",
                 "agentPoolProfiles": "[variables('agentPoolProfiles')]",
                 "networkProfile": {
                     "networkPlugin": "[parameters('clusterNetworkPlugin')]",
