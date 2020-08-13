@@ -82,10 +82,10 @@
             }
         },
         "clusterNodeResourceGroupFormat": {
-            "defaultValue": "%clusterName%_aksnodes",
+            "defaultValue": "%resourceGroupName%-%clusterName%-aks",
             "type": "string",
             "metadata": {
-                "description": "The format string used to name the resource group used to contain the nodes and other Azure resources created by this cluster. `%clusterName%` is used to insert the name of the cluster."
+                "description": "The format string used to name the resource group used to contain the nodes and other Azure resources created by this cluster. `%clusterName%` is used to insert the name of the cluster. '%resourceGroupName%' is used to insert the name of the resource group for this deployment."
             }
         },
         // Cluster features
@@ -273,7 +273,7 @@
     },
     "variables": {
         "clusterName": "[parameters('name')]",
-        "clusterNodeResourceGroupName": "[replace(parameters('clusterNodeResourceGroupFormat'), '%clusterName%', variables('clusterName'))]",
+        "clusterNodeResourceGroupName": "[replace(replace(parameters('clusterNodeResourceGroupFormat'), '%clusterName%', variables('clusterName')), '%resourceGroupName%', resourceGroup().name)]",
         "vnetName": "[concat(parameters('name'),'-vnet')]",
         "containerRegistryName": "[parameters('name')]",
         "containerRegistryPrivateLinkName": "[concat(parameters('name'),'-ple')]",
