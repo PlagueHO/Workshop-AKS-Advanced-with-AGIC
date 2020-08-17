@@ -24,5 +24,4 @@ clusterAdminGroupObjectIds=$(az ad group create \
 az deployment group $ACTION \
     --resource-group $RESOURCEGROUPNAME \
     --template-file ./src/infrastructure/azuredeploy.json \
-    --parameters @./src/infrastructure/azuredeploy.parameters.json \
     --parameters "{ \"name\": {\"value\": \"$RESOURCENAME\"}, \"clusterAdminGroupObjectIds\": {\"value\": [ $clusterAdminGroupObjectIds ]}}"

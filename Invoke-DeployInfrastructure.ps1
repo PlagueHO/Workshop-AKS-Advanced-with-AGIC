@@ -35,7 +35,6 @@ $clusterAdminGroupObjectIds = (New-AzADGroup `
 New-AzResourceGroupDeployment `
     -ResourceGroupName $ResourceGroupName `
     -TemplateFile './src/infrastructure/azuredeploy.json' `
-    -TemplateParameterFile './src/infrastructure/azuredeploy.parameters.json'
     -TemplateParameterObject @{
         name = $ResourceName
         clusterAdminGroupObjectIds = @( $clusterAdminGroupObjectIds )

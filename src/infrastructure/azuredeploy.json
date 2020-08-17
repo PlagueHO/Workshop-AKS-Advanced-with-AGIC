@@ -5,6 +5,7 @@
         // Base information
         "name": {
             "type": "string",
+            "defaultValue": "mykube",
             "metadata": {
                 "description": "The base name of the Kubernetes cluster and related resources."
             }
@@ -89,6 +90,7 @@
         },
         // Cluster features
         "clusterAdminGroupObjectIds": {
+            "defaultValue": [],
             "type": "array",
             "metadata": {
                 "description": "Array of Azure AD Group object Ids to use for cluster administrators."
