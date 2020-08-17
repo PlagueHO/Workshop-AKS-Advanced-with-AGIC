@@ -26,7 +26,8 @@ Register-AzProviderFeature `
 
 New-AzResourceGroup `
     -Name $ResourceGroupName `
-    -Location $Location
+    -Location $Location `
+    -Force
 
 $clusterAdminGroupObjectIds = (New-AzADGroup `
     -DisplayName "${ResourceName}ClusterAdmin" `
