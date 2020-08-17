@@ -1,0 +1,96 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "value": "mykube"
+        },
+        "location": {
+            "value": null
+        },
+        "logAnalyticsSku": {
+            "value": null
+        },
+        "containerRegistrySku": {
+            "value": null
+        },
+        "containerRegistryPrivateLink": {
+            "value": null
+        },
+        "containerRegistryPrivateLinkDnsZoneName": {
+            "value": null
+        },
+        "containerRegistryPublicNetworkAccess": {
+            "value": null
+        },
+        "kubernetesVersion": {
+            "value": null
+        },
+        "clusterNodeResourceGroupFormat": {
+            "value": null
+        },
+        "clusterAdminGroupObjectIds": {
+            "value": []
+        },
+        "clusterEnableHttpApplicationRouting": {
+            "value": null
+        },
+        "clusterEnableKubeDashboard": {
+            "value": null
+        },
+        "clusterEnableRbac": {
+            "value": null
+        },
+        "vnetAddressPrefix": {
+            "value": null
+        },
+        "vnetSubnetName": {
+            "value": null
+        },
+        "vnetSubnetPrefix": {
+            "value": null
+        },
+        "clusterNetworkPlugin": {
+            "value": null
+        },
+        "clusterServiceCidr": {
+            "value": null
+        },
+        "clusterDnsServiceIp": {
+            "value": null
+        },
+        "clusterDockerBridgeCidr": {
+            "value": null
+        },
+        "clusterNetworkPolicy": {
+            "value": null
+        },
+        "clusterNetworkLoadBalancerSku": {
+            "value": null
+        },
+        "systemNodePoolOsDiskSizeGB": {
+            "value": null
+        },
+        "systemNodePoolNodeCount": {
+            "value": null
+        },
+        "systemNodePoolMinNodeCount": {
+            "value": null
+        },
+        "systemNodePoolMaxNodeCount": {
+            "value": null
+        },
+        "systemNodePoolVmSize": {
+            "value": null
+        },
+        "systemNodePoolMaxPods": {
+            "value": null
+        },
+        "workloadWindowsNodePool": {
+            "value": null
+        },
+        "workloadLinuxNodePool": {
+            "value": null
+        }
+    }
+}

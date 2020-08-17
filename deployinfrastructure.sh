@@ -1,22 +1,18 @@
 #!/bin/sh
-export SUBSCRIPTION="Customer"
-export RESOURCEGROUP="dsr-kube-rg"
-export RESOURCENAME="dsrkube"
+export RESOURCEGROUPNAME="kubernetes-rg"
+export RESOURCENAME="mykube"
 export LOCATION="eastus"
 export ACTION="create"
 
 az provider register \
-     --subscription $SUBSCRIPTION \
      --name Microsoft.ContainerService
 
 az feature register \
-    --subscription $SUBSCRIPTION \
     --name AAD-V2 \
     --namespace Microsoft.ContainerService
 
 az group create \
-    --subscription $SUBSCRIPTION \
-    --name $RESOURCEGROUP \
+    --name $RESOURCEGROUPNAME \
     --location $LOCATION
 
 clusterAdminGroupObjectIds=$(az ad group create \
@@ -25,11 +21,8 @@ clusterAdminGroupObjectIds=$(az ad group create \
     --output JSON \
     --query objectId)
 
-if $1;
-    export ACTION="what-if"
-
 az deployment group $ACTION \
-    --subscription $SUBSCRIPTION \
-    --resource-group $RESOURCEGROUP \
+    --resource-group $RESOURCEGROUPNAME \
     --template-file ./src/infrastructure/azuredeploy.json \
+    --parameters @./src/infrastructure/azuredeploy.parameters.json \
     --parameters "{ \"name\": {\"value\": \"$RESOURCENAME\"}, \"clusterAdminGroupObjectIds\": {\"value\": [ $clusterAdminGroupObjectIds ]}}"
