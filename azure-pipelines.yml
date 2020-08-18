@@ -19,13 +19,6 @@ stages:
         displayName: 'Test Infrastructure'
         pool:
           vmImage: ubuntu-16.04
-          variables:
-          - name: resourceName
-            value: dsrkubetest
-          - name: ResourceGroupName
-            value: dsr-kubetest-rg
-          - name: Location
-            value: eastus
 
           steps:
           - task: AzurePowerShell@5
