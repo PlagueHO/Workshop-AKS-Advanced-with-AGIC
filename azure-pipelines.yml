@@ -55,7 +55,7 @@ stages:
 
                 $clusterAdminGroup = Get-AzADGroup -DisplayName $clusterAdminName
 
-                if ($null -eq $clusterAdminName) {
+                if ($null -eq $clusterAdminGroup) {
                   Write-Verbose -Message "Creating '$clusterAdminName' AAD Group" -Verbose
 
                   $clusterAdminGroupObjectIds = (New-AzADGroup `
