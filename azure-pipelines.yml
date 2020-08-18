@@ -29,7 +29,7 @@ stages:
               azurePowerShellVersion: LatestVersion
               ScriptType: 'InlineScript'
               Inline: |
-                Import-Module -Name .\src\infrastructure\azuredeploy.utilities\
+                Import-Module -Name '.\src\infrastructure\azuredeploy.utilities\'
 
                 Register-AzureResourceProviderAndFeature -Verbose
 
@@ -42,7 +42,7 @@ stages:
               azurePowerShellVersion: LatestVersion
               ScriptType: 'InlineScript'
               Inline: |
-                Import-Module -Name .\src\infrastructure\azuredeploy.utilities\
+                Import-Module -Name '.\src\infrastructure\azuredeploy.utilities\'
 
                 $clusterAdminGroupObjectId = New-ClusterAdminAadGroup -ResourceName $(ResourceName) -Verbose
 

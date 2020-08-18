@@ -17,7 +17,7 @@ param (
     $WhatIf
 )
 
-Import-Module -Name .\src\infrastructure\azuredeploy.utilities\ -Force
+Import-Module -Name '.\src\infrastructure\azuredeploy.utilities\' -Force
 
 Register-AzureResourceProviderAndFeature -Verbose:$VerbosePreference
 $clusterAdminGroupObjectId = New-ClusterAdminAadGroup -ResourceName $ResourceName -Verbose:$VerbosePreference
