@@ -21,39 +21,39 @@ stages:
           vmImage: ubuntu-16.04
 
           steps:
-          - task: AzurePowerShell@5
-            inputs:
-              azureSubscription: 'Azure Test Connection'
-              ScriptType: 'InlineScript'
-              Inline: |
-                Register-AzResourceProvider `
-                    -ProviderNamespace 'Microsoft.ContainerService'
+            - task: AzurePowerShell@5
+              inputs:
+                azureSubscription: 'Azure Test Connection'
+                ScriptType: 'InlineScript'
+                Inline: |
+                  Register-AzResourceProvider `
+                      -ProviderNamespace 'Microsoft.ContainerService'
 
-                Register-AzProviderFeature `
-                    -Feature 'AAD-V2' `
-                    -ProviderNamespace 'Microsoft.ContainerService'
+                  Register-AzProviderFeature `
+                      -Feature 'AAD-V2' `
+                      -ProviderNamespace 'Microsoft.ContainerService'
 
-                New-AzResourceGroup `
-                    -Name $(ResourceGroupName) `
-                    -Location $(Location) `
-                    -Force
+                  New-AzResourceGroup `
+                      -Name $(ResourceGroupName) `
+                      -Location $(Location) `
+                      -Force
 
-                $clusterAdminName = "$(ResourceName)ClusterAdmin"
-                $clusterAdminGroupObjectIds = (New-AzADGroup `
-                    -DisplayName $clusterAdminName `
-                    -MailNickname $clusterAdminName.Id
+                  $clusterAdminName = "$(ResourceName)ClusterAdmin"
+                  $clusterAdminGroupObjectIds = (New-AzADGroup `
+                      -DisplayName $clusterAdminName `
+                      -MailNickname $clusterAdminName.Id
 
-                echo "##vso[task.setvariable variable=clusterAdminGroupObjectIds;isOutput=true]$clusterAdminGroupObjectIds"
+                  echo "##vso[task.setvariable variable=clusterAdminGroupObjectIds;isOutput=true]$clusterAdminGroupObjectIds"
 
-          - task: AzureResourceManagerTemplateDeployment@3
-            name: Deploy_Infrastructure
-            displayName: 'Deploy Azure Resource Manager Template'
-            inputs:
-              deploymentScope: 'Resource Group'
-              azureResourceManagerConnection: 'Azure Test Connection'
-              subscriptionId: 'c7f8ca1e-46f6-4a59-a039-15eaefd2337e'
-              action: 'Create Or Update Resource Group'
-              resourceGroupName: $(ResourceGroupName)
-              templateLocation: 'Linked artifact'
-              csmFile: 'src\infrastructure\azuredeploy.json'
-              deploymentMode: 'Incremental'
+            - task: AzureResourceManagerTemplateDeployment@3
+              name: Deploy_Infrastructure
+              displayName: 'Deploy Azure Resource Manager Template'
+              inputs:
+                deploymentScope: 'Resource Group'
+                azureResourceManagerConnection: 'Azure Test Connection'
+                subscriptionId: 'c7f8ca1e-46f6-4a59-a039-15eaefd2337e'
+                action: 'Create Or Update Resource Group'
+                resourceGroupName: $(ResourceGroupName)
+                templateLocation: 'Linked artifact'
+                csmFile: 'src\infrastructure\azuredeploy.json'
+                deploymentMode: 'Incremental'
