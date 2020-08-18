@@ -49,7 +49,7 @@ stages:
               azurePowerShellVersion: LatestVersion
               ScriptType: 'InlineScript'
               Inline: |
-                $clusterAdminName = "${ResourceName}ClusterAdmin"
+                $clusterAdminName = "$(ResourceName)ClusterAdmin"
 
                 Write-Verbose -Message "Looking up '$clusterAdminName' AAD Group" -Verbose
 
@@ -81,3 +81,4 @@ stages:
               templateLocation: 'Linked artifact'
               csmFile: 'src\infrastructure\azuredeploy.json'
               deploymentMode: 'Incremental'
+              location: $(Location)
