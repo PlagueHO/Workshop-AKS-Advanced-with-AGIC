@@ -18,7 +18,7 @@ stages:
       - job: Test_Infrastructure
         displayName: 'Test Infrastructure'
         pool:
-          vmImage: ubuntu-16.04
+          vmImage: vs2017-win2016
         steps:
           - task: AzurePowerShell@5
             name: Enable_Azure_Resource_Providers
