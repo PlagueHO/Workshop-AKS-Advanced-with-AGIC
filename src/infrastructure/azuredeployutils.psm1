@@ -83,12 +83,13 @@ function Deploy-AzureResourceGroupAndInfrastructure
         -Force
 
     Write-Verbose -Message "Deplying Resources to Resource Group '$ResourceGroupName' from './src/infrastructure/azuredeploy.json'"
+    Write-Verbose -Message "Cluster Admin Group Object Id is '$($clusterAdminGroupObjectId -join ',')'"
 
     New-AzResourceGroupDeployment `
         -ResourceGroupName $ResourceGroupName `
         -TemplateFile './src/infrastructure/azuredeploy.json' `
         -TemplateParameterObject @{
-        name                       = $ResourceName
-        clusterAdminGroupObjectIds = @( $clusterAdminGroupObjectId )
-    } -WhatIf:$WhatIf
+            name                       = $ResourceName
+            clusterAdminGroupObjectIds = @( $clusterAdminGroupObjectId )
+        } -WhatIf:$WhatIf
 }
