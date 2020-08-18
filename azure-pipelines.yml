@@ -25,6 +25,8 @@ stages:
             displayName: 'Enable Azure Resource Providers'
             inputs:
               azureSubscription: 'Azure Test Connection'
+              pwsh: true
+              azurePowerShellVersion: LatestVersion
               ScriptType: 'InlineScript'
               Inline: |
                 Register-AzResourceProvider `
@@ -39,6 +41,8 @@ stages:
             displayName: 'Create Cluster Admin Group'
             inputs:
               azureSubscription: 'Azure Test Connection'
+              pwsh: true
+              azurePowerShellVersion: LatestVersion
               ScriptType: 'InlineScript'
               Inline: |
                 $clusterAdminName = "$(ResourceName)ClusterAdmin"
