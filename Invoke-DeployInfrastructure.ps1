@@ -17,7 +17,7 @@ param (
     $WhatIf
 )
 
-Import-Module -Name .\src\infrastructure\azuredeployutils.psm1
+Import-Module -Name .\src\infrastructure\azuredeployutils.psm1 -Force
 
 Register-AzureResourceProviderAndFeature
 $clusterAdminGroupObjectId = New-ClusterAdminAadGroup -ResourceName $ResourceName
