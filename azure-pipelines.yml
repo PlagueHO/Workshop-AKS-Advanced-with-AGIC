@@ -29,8 +29,14 @@ stages:
               azurePowerShellVersion: LatestVersion
               ScriptType: 'InlineScript'
               Inline: |
+                $VerbosePreference = 'Continue'
+
+                Write-Verbose -Message 'Registering Microsoft.ContainerService Provider'
+
                 Register-AzResourceProvider `
                     -ProviderNamespace 'Microsoft.ContainerService'
+
+                Write-Verbose -Message 'Registering Microsoft.ContainerService\AAD-V2 Feature'
 
                 Register-AzProviderFeature `
                     -Feature 'AAD-V2' `
@@ -45,16 +51,25 @@ stages:
               azurePowerShellVersion: LatestVersion
               ScriptType: 'InlineScript'
               Inline: |
+                $VerbosePreference = 'Continue'
+
                 $clusterAdminName = "${ResourceName}ClusterAdmin"
-                $clusterAdminGroup = @(Get-AzADGroup -DisplayName $clusterAdminName -ErrorAction SilentlyContinue)
+
+                Write-Verbose -Message "Looking up '$clusterAdminName' AAD Group"
+
+                $clusterAdminGroup = Get-AzADGroup -DisplayName $clusterAdminName
 
                 if ($null -eq $clusterAdminName) {
-                    $clusterAdminGroupObjectIds = (New-AzADGroup `
-                        -DisplayName $clusterAdminName `
-                        -MailNickname $clusterAdminName).Id
+                  Write-Verbose -Message "Creating '$clusterAdminName' AAD Group"
+
+                  $clusterAdminGroupObjectIds = (New-AzADGroup `
+                    -DisplayName $clusterAdminName `
+                    -MailNickname $clusterAdminName).Id
                 } else {
-                    $clusterAdminGroupObjectIds = $clusterAdminGroup[0].Id
+                    $clusterAdminGroupObjectIds = @($clusterAdminGroup[0].Id)
                 }
+
+                Write-Verbose -Message "AAD Group '$clusterAdminName' has Object Id '$($clusterAdminGroupObjectIds -join ',')'"
 
                 echo "##vso[task.setvariable variable=clusterAdminGroupObjectIds;isOutput=true]$clusterAdminGroupObjectIds"
 
