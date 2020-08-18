@@ -11,15 +11,15 @@ az feature register \
     --name AAD-V2 \
     --namespace Microsoft.ContainerService
 
-az group create \
-    --name $RESOURCEGROUPNAME \
-    --location $LOCATION
-
 clusterAdminGroupObjectIds=$(az ad group create \
     --display-name ${RESOURCENAME}ClusterAdmin \
     --mail-nickname ${RESOURCENAME}ClusterAdmin \
     --output JSON \
     --query objectId)
+
+az group create \
+    --name $RESOURCEGROUPNAME \
+    --location $LOCATION
 
 az deployment group $ACTION \
     --resource-group $RESOURCEGROUPNAME \
