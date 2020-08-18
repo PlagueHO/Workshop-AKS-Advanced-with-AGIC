@@ -29,9 +29,10 @@ New-AzResourceGroup `
     -Location $Location `
     -Force
 
+$clusterAdminName = "${ResourceName}ClusterAdmin"
 $clusterAdminGroupObjectIds = (New-AzADGroup `
-    -DisplayName "${ResourceName}ClusterAdmin" `
-    -MailNickname "${ResourceName}ClusterAdmin").Id
+    -DisplayName $clusterAdminName `
+    -MailNickname $clusterAdminName).Id
 
 New-AzResourceGroupDeployment `
     -ResourceGroupName $ResourceGroupName `
