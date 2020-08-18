@@ -29,14 +29,12 @@ stages:
               azurePowerShellVersion: LatestVersion
               ScriptType: 'InlineScript'
               Inline: |
-                $VerbosePreference = 'Continue'
-
-                Write-Verbose -Message 'Registering Microsoft.ContainerService Provider'
+                Write-Verbose -Message 'Registering Microsoft.ContainerService Provider' -Verbose
 
                 Register-AzResourceProvider `
                     -ProviderNamespace 'Microsoft.ContainerService'
 
-                Write-Verbose -Message 'Registering Microsoft.ContainerService\AAD-V2 Feature'
+                Write-Verbose -Message 'Registering Microsoft.ContainerService\AAD-V2 Feature' -Verbose
 
                 Register-AzProviderFeature `
                     -Feature 'AAD-V2' `
@@ -51,27 +49,25 @@ stages:
               azurePowerShellVersion: LatestVersion
               ScriptType: 'InlineScript'
               Inline: |
-                $VerbosePreference = 'Continue'
-
                 $clusterAdminName = "${ResourceName}ClusterAdmin"
 
-                Write-Verbose -Message "Looking up '$clusterAdminName' AAD Group"
+                Write-Verbose -Message "Looking up '$clusterAdminName' AAD Group" -Verbose
 
                 $clusterAdminGroup = Get-AzADGroup -DisplayName $clusterAdminName
 
                 if ($null -eq $clusterAdminName) {
-                  Write-Verbose -Message "Creating '$clusterAdminName' AAD Group"
+                  Write-Verbose -Message "Creating '$clusterAdminName' AAD Group" -Verbose
 
                   $clusterAdminGroupObjectIds = (New-AzADGroup `
                     -DisplayName $clusterAdminName `
                     -MailNickname $clusterAdminName).Id
                 } else {
-                    $clusterAdminGroupObjectIds = @($clusterAdminGroup[0].Id)
+                    $clusterAdminGroupObjectIds = $clusterAdminGroup.Id
                 }
 
                 Write-Verbose -Message "AAD Group '$clusterAdminName' has Object Id '$($clusterAdminGroupObjectIds -join ',')'"
 
-                echo "##vso[task.setvariable variable=clusterAdminGroupObjectIds;isOutput=true]$clusterAdminGroupObjectIds"
+                echo "##vso[task.setvariable variable=clusterAdminGroupObjectIds;isOutput=true]$clusterAdminGroupObjectIds" -Verbose
 
           - task: AzureResourceManagerTemplateDeployment@3
             name: Deploy_Azure_Resource_Manager_Template
