@@ -3,12 +3,12 @@ function Register-AzureResourceProviderAndFeature
     [CmdletBinding()]
     param ()
 
-    Write-Verbose -Message 'Registering Microsoft.ContainerService Provider' -Verbose
+    Write-Verbose -Message 'Registering Microsoft.ContainerService Provider'
 
     Register-AzResourceProvider `
         -ProviderNamespace 'Microsoft.ContainerService'
 
-    Write-Verbose -Message 'Registering Microsoft.ContainerService\AAD-V2 Feature' -Verbose
+    Write-Verbose -Message 'Registering Microsoft.ContainerService\AAD-V2 Feature'
 
     Register-AzProviderFeature `
         -Feature 'AAD-V2' `
@@ -28,13 +28,13 @@ function New-ClusterAdminAadGroup
 
     $clusterAdminName = "${ResourceName}ClusterAdmin"
 
-    Write-Verbose -Message "Looking up '$clusterAdminName' AAD Group" -Verbose
+    Write-Verbose -Message "Looking up '$clusterAdminName' AAD Group"
 
     $clusterAdminGroup = Get-AzADGroup -DisplayName $clusterAdminName
 
     if ($null -eq $clusterAdminGroup)
     {
-        Write-Verbose -Message "Creating '$clusterAdminName' AAD Group" -Verbose
+        Write-Verbose -Message "Creating '$clusterAdminName' AAD Group"
 
         $clusterAdminGroupObjectId = (New-AzADGroup `
                 -DisplayName $clusterAdminName `
@@ -45,7 +45,7 @@ function New-ClusterAdminAadGroup
         $clusterAdminGroupObjectId = $clusterAdminGroup.Id
     }
 
-    Write-Verbose -Message "AAD Group '$clusterAdminName' has Object Id '$($clusterAdminGroupObjectId -join ',')'" -Verbose
+    Write-Verbose -Message "AAD Group '$clusterAdminName' has Object Id '$($clusterAdminGroupObjectId -join ',')'"
 
     return $clusterAdminGroupObjectId
 }
@@ -75,16 +75,20 @@ function Deploy-AzureResourceGroupAndInfrastructure
         $WhatIf
     )
 
+    Write-Verbose -Message "Create Resource Group '$ResourceGroupName' in '$Location'"
+
     New-AzResourceGroup `
         -Name $ResourceGroupName `
         -Location $Location `
         -Force
+
+    Write-Verbose -Message "Deplying Resources to Resource Group '$ResourceGroupName' from './src/infrastructure/azuredeploy.json'"
 
     New-AzResourceGroupDeployment `
         -ResourceGroupName $ResourceGroupName `
         -TemplateFile './src/infrastructure/azuredeploy.json' `
         -TemplateParameterObject @{
         name                       = $ResourceName
-        clusterAdminGroupObjectIds = @( $clusterAdminGroupObjectIds )
+        clusterAdminGroupObjectIds = @( $clusterAdminGroupObjectId )
     } -WhatIf:$WhatIf
 }
