@@ -30,9 +30,15 @@ New-AzResourceGroup `
     -Force
 
 $clusterAdminName = "${ResourceName}ClusterAdmin"
-$clusterAdminGroupObjectIds = (New-AzADGroup `
-    -DisplayName $clusterAdminName `
-    -MailNickname $clusterAdminName).Id
+$clusterAdminGroup = @(Get-AzADGroup -DisplayName $clusterAdminName -ErrorAction SilentlyContinue)
+
+if ($null -eq $clusterAdminName) {
+    $clusterAdminGroupObjectIds = (New-AzADGroup `
+        -DisplayName $clusterAdminName `
+        -MailNickname $clusterAdminName).Id
+} else {
+    $clusterAdminGroupObjectIds = $clusterAdminGroup[0].Id
+}
 
 New-AzResourceGroupDeployment `
     -ResourceGroupName $ResourceGroupName `
