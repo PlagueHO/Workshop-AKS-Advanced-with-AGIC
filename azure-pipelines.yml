@@ -65,7 +65,7 @@ stages:
                     $clusterAdminGroupObjectIds = $clusterAdminGroup.Id
                 }
 
-                Write-Verbose -Message "AAD Group '$clusterAdminName' has Object Id '$($clusterAdminGroupObjectIds -join ',')'"
+                Write-Verbose -Message "AAD Group '$clusterAdminName' has Object Id '$($clusterAdminGroupObjectIds -join ',')'" -Verbose
 
                 echo "##vso[task.setvariable variable=clusterAdminGroupObjectIds;isOutput=true]$clusterAdminGroupObjectIds" -Verbose
 
