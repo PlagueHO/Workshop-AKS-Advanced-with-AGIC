@@ -61,3 +61,4 @@ stages:
               csmFile: 'src\infrastructure\azuredeploy.json'
               deploymentMode: 'Incremental'
               location: $(Location)
+              overrideParameters: -name "$(ResourceName)" -clusterAdminGroupObjectIds [ "$(Create_Cluster_Admin_Group.clusterAdminGroupObjectId)" ]
