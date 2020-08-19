@@ -49,8 +49,8 @@ stages:
                 echo "##vso[task.setvariable variable=clusterAdminGroupObjectId;isOutput=true]$clusterAdminGroupObjectId" -Verbose
 
           - task: AzureResourceManagerTemplateDeployment@3
-            name: Deploy_Azure_Resource_Manager_Template
-            displayName: 'Deploy Azure Resource Manager Template'
+            name: Deploy_Cluster_Resources
+            displayName: 'Deploy Cluster Resources'
             inputs:
               deploymentScope: 'Resource Group'
               azureResourceManagerConnection: 'Azure Test Connection'
@@ -62,3 +62,17 @@ stages:
               deploymentMode: 'Incremental'
               location: $(Location)
               overrideParameters: -name "$(ResourceName)" -clusterAdminGroupObjectIds [ "$(Create_Cluster_Admin_Group.clusterAdminGroupObjectId)" ]
+
+          - task: AzurePowerShell@5
+            name: Delete_Resource_Group
+            displayName: 'Delete Resource Group'
+            condition: always()
+            inputs:
+              azureSubscription: 'Azure Test Connection'
+              pwsh: true
+              azurePowerShellVersion: LatestVersion
+              ScriptType: 'InlineScript'
+              Inline: |
+                Write-Verbose -Message 'Deleting resource group $(ResourceGroupName)' -Verbose
+
+                Remove-AzResourceGroup -ResourceGroupName $(ResourceGroupName) -Force
