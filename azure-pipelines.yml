@@ -2,15 +2,7 @@ name: $(rev:r)
 trigger:
   branches:
     include:
-    - '*'
-  paths:
-    include:
-    - src/*
-  tags:
-    include:
-    - "v*"
-    exclude:
-    - "*-*"
+    - main
 
 stages:
   - stage: Test
