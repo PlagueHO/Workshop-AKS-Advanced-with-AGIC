@@ -103,13 +103,6 @@
                 "description": "Boolean flag to turn on and off of http application routing."
             }
         },
-        "clusterEnableKubeDashboard": {
-            "defaultValue": true,
-            "type": "bool",
-            "metadata": {
-                "description": "Boolean flag to turn on and off of kubernetes dashboard."
-            }
-        },
         "clusterEnableRbac": {
             "defaultValue": true,
             "type": "bool",
@@ -354,9 +347,6 @@
                 "addonProfiles": {
                     "httpApplicationRouting": {
                         "enabled": "[parameters('clusterEnableHttpApplicationRouting')]"
-                    },
-                    "KubeDashboard": {
-                        "enabled": "[parameters('clusterEnableKubeDashboard')]"
                     },
                     "omsAgent": {
                         "enabled": true,
