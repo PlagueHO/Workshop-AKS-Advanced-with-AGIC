@@ -54,7 +54,7 @@ stages:
             inputs:
               deploymentScope: 'Resource Group'
               azureResourceManagerConnection: 'Azure Test Connection'
-              subscriptionId: 'c7f8ca1e-46f6-4a59-a039-15eaefd2337e'
+              subscriptionId: $(SubscriptionId)
               action: 'Create Or Update Resource Group'
               resourceGroupName: $(ResourceGroupName)
               templateLocation: 'Linked artifact'
