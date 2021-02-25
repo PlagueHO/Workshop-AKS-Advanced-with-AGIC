@@ -75,7 +75,7 @@
         },
         // Core cluster information
         "kubernetesVersion": {
-            "defaultValue": "1.18.4",
+            "defaultValue": "1.19.7",
             "type": "string",
             "metadata": {
                 "description": "The version of Kubernetes to use for this cluster."
