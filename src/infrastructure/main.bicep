@@ -210,7 +210,7 @@ var defaultLinuxPoolProfile = {
 }
 var workloadWindowsNodePoolWithSubnetId = union(defaultWindowsPoolProfile, json('{"vnetSubnetId": "${virtualNetworkModule.outputs.vnetSubnetId}"}'), workloadWindowsNodePool)
 var workloadLinuxNodePoolWithSubnetId = union(defaultLinuxPoolProfile, json('{"vnetSubnetId": "${virtualNetworkModule.outputs.vnetSubnetId}"}'), workloadLinuxNodePool)
-var agentPoolProfiles = concat(array(systemPoolProfile), array(workloadWindowsNodePoolWithSubnetId), array(workloadLinuxNodePoolWithSubnetId)) // TODO Check why this can't be inlined
+var agentPoolProfiles = concat(array(systemPoolProfile), array(workloadWindowsNodePoolWithSubnetId), array(workloadLinuxNodePoolWithSubnetId))
 
 resource cluster 'Microsoft.ContainerService/managedClusters@2020-04-01' = {
   name: clusterName
