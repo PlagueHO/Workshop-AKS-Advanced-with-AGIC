@@ -150,7 +150,6 @@ var containerRegistryName = name
 var containerRegistryPrivateLinkName = '${name}-ple'
 var logAnalyticsWorkspaceName = '${name}-law'
 var clusterDnsPrefix = name
-var vnetSubnetId = resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, vnetSubnetName)
 var systemPoolProfile = [
   {
     name: 'agentpool'
@@ -163,7 +162,7 @@ var systemPoolProfile = [
     osDiskSizeGB: systemNodePoolOsDiskSizeGB
     type: 'VirtualMachineScaleSets'
     storageProfile: 'ManagedDisks'
-    vnetSubnetId: vnetSubnetId // TODO check if we can do this in a more Bicep-friendly way
+    vnetSubnetId: virtualNetworkModule.outputs.vnetSubnetId
     maxPods: systemNodePoolMaxPods
     mode: 'System'
   }
@@ -209,16 +208,13 @@ var defaultLinuxPoolProfile = {
     '3'
   ]
 }
-var workloadWindowsNodePoolWithSubnetId = union(defaultWindowsPoolProfile, json('{"vnetSubnetId": "${vnetSubnetId}"}'), workloadWindowsNodePool)
-var workloadLinuxNodePoolWithSubnetId = union(defaultLinuxPoolProfile, json('{"vnetSubnetId": "${vnetSubnetId}"}'), workloadLinuxNodePool)
-var agentPoolProfiles = concat(array(systemPoolProfile), array(workloadWindowsNodePoolWithSubnetId), array(workloadLinuxNodePoolWithSubnetId))
+var workloadWindowsNodePoolWithSubnetId = union(defaultWindowsPoolProfile, json('{"vnetSubnetId": "${virtualNetworkModule.outputs.vnetSubnetId}"}'), workloadWindowsNodePool)
+var workloadLinuxNodePoolWithSubnetId = union(defaultLinuxPoolProfile, json('{"vnetSubnetId": "${virtualNetworkModule.outputs.vnetSubnetId}"}'), workloadLinuxNodePool)
+var agentPoolProfiles = concat(array(systemPoolProfile), array(workloadWindowsNodePoolWithSubnetId), array(workloadLinuxNodePoolWithSubnetId)) // TODO Check why this can't be inlined
 
 resource cluster 'Microsoft.ContainerService/managedClusters@2020-04-01' = {
   name: clusterName
   location: location
-  dependsOn: [
-    virtualNetworkModule
-  ]
   properties: {
     kubernetesVersion: kubernetesVersion
     enableRBAC: clusterEnableRbac
