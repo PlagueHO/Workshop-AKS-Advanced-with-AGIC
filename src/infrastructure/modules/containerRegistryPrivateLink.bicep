@@ -39,7 +39,7 @@ resource containerRegistryPrivateLinkDnsZone 'Microsoft.Network/privateDnsZones@
 
   resource vnetLink 'virtualNetworkLinks' = {
     parent: containerRegistryPrivateLinkDnsZone
-    name: 'xjfvugx7v554a' // TODO is this a magic name?
+    name: vnetName
     location: 'global'
     properties: {
       registrationEnabled: false
