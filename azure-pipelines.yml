@@ -59,16 +59,7 @@ stages:
               scriptLocation: 'inlineScript'
               inlineScript: |
                 az group create --name $(ResourceGroupName) --location $(Location)
-                $parameters = @"
-                {
-                  "name": {
-                    "value": "$(ResourceName)"
-                  },
-                  "clusterAdminGroupObjectIds": {
-                    "value": [ "$(ClusterAdminGroupObjectIds)" ]
-                  }
-                }
-                "@
+                $parameters = '{ "name": { "value": "$(ResourceName)" }, "clusterAdminGroupObjectIds": { "value": [ "$(ClusterAdminGroupObjectIds)" ] } }'
                 az @('deployment','group','create', `
                   '--template-file','src\infrastructure\azuredeploy.json', `
                   '--resource-group','$(ResourceGroupName)', `
@@ -106,16 +97,7 @@ stages:
               scriptLocation: 'inlineScript'
               inlineScript: |
                 az group create --name $(ResourceGroupName) --location $(Location)
-                $parameters = @"
-                {
-                  "name": {
-                    "value": "$(ResourceName)"
-                  },
-                  "clusterAdminGroupObjectIds": {
-                    "value": [ "$(ClusterAdminGroupObjectIds)" ]
-                  }
-                }
-                "@
+                $parameters = '{ "name": { "value": "$(ResourceName)" }, "clusterAdminGroupObjectIds": { "value": [ "$(ClusterAdminGroupObjectIds)" ] } }'
                 az @('deployment','group','create', `
                   '--template-file','src\infrastructure\main.bicep', `
                   '--resource-group','$(ResourceGroupName)', `
