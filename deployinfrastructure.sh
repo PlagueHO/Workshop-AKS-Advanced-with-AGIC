@@ -3,6 +3,8 @@ export RESOURCEGROUPNAME="kubernetes-rg"
 export RESOURCENAME="mykube"
 export LOCATION="eastus"
 export ACTION="create"
+export TEMPLATEFILE="./src/infrastructure/azuredeploy.json"
+# export TEMPLATEFILE="./src/infrastructure/main.bicep"
 
 az provider register \
      --name Microsoft.ContainerService
@@ -23,5 +25,5 @@ az group create \
 
 az deployment group $ACTION \
     --resource-group $RESOURCEGROUPNAME \
-    --template-file ./src/infrastructure/azuredeploy.json \
+    --template-file $TEMPLATEFILE \
     --parameters "{ \"name\": {\"value\": \"$RESOURCENAME\"}, \"clusterAdminGroupObjectIds\": {\"value\": [ $clusterAdminGroupObjectIds ]}}"
