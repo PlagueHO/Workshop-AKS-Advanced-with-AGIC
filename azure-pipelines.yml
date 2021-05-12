@@ -59,8 +59,8 @@ stages:
               scriptLocation: 'inlineScript'
               inlineScript: |
                 az group create --name $(ResourceGroupName) --location $(Location)
-                az deployment group create  `
-                --template-file 'src\infrastructure\azuredeploy.json'
+                az deployment group create `
+                --template-file 'src\infrastructure\azuredeploy.json' `
                 --resource-group $(ResourceGroupName) `
                 --parameters name=$(ResourceName) `
                 --parameters clusterAdminGroupObectIds=[ "$(ClusterAdminGroupObjectIds)" ]
@@ -98,8 +98,8 @@ stages:
               scriptLocation: 'inlineScript'
               inlineScript: |
                 az group create --name $(ResourceGroupName) --location $(Location)
-                az deployment group create  `
-                --template-file 'src\infrastructure\main.bicep'
+                az deployment group create `
+                --template-file 'src\infrastructure\main.bicep' `
                 --resource-group $(ResourceGroupName) `
                 --parameters name=$(ResourceName) `
                 --parameters clusterAdminGroupObjectIds=[ "$(ClusterAdminGroupObjectIds)" ]
