@@ -50,6 +50,8 @@ stages:
             value: '$(BaseResourceName)-arm-rg'
           - name: ResourceName
             value: '$(BaseResourceName)arm'
+          - name: ClusterAdminGroupObjectIds
+            value: $[ dependencies.Prepare_Azure_Subscription.outputs['clusterAdminGroupObjectId'] ]
         steps:
           - task: AzureResourceManagerTemplateDeployment@3
             name: Deploy_Cluster_ARM
@@ -64,7 +66,7 @@ stages:
               csmFile: 'src\infrastructure\azuredeploy.json'
               deploymentMode: 'Incremental'
               location: $(Location)
-              overrideParameters: -name "$(ResourceName)" -clusterAdminGroupObjectIds [ "$(Create_Cluster_Admin_Group.clusterAdminGroupObjectId)" ]
+              overrideParameters: -name "$(ResourceName)" -clusterAdminGroupObjectIds [ "$(ClusterAdminGroupObjectIds)" ]
 
           - task: AzurePowerShell@5
             name: Delete_Resource_Group_ARM
@@ -90,6 +92,8 @@ stages:
             value: '$(BaseResourceName)-bicep-rg'
           - name: ResourceName
             value: '$(BaseResourceName)bicep'
+          - name: ClusterAdminGroupObjectIds
+            value: $[ dependencies.Prepare_Azure_Subscription.outputs['clusterAdminGroupObjectId'] ]
         steps:
           - task: AzureResourceManagerTemplateDeployment@3
             name: Deploy_Cluster_ARM
@@ -104,7 +108,7 @@ stages:
               csmFile: 'src\infrastructure\main.bicep'
               deploymentMode: 'Incremental'
               location: $(Location)
-              overrideParameters: -name "$(ResourceName)" -clusterAdminGroupObjectIds [ "$(Create_Cluster_Admin_Group.clusterAdminGroupObjectId)" ]
+              overrideParameters: -name "$(ResourceName)" -clusterAdminGroupObjectIds [ "$(ClusterAdminGroupObjectIds)" ]
 
           - task: AzurePowerShell@5
             name: Delete_Resource_Group_Bicep
