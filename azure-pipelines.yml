@@ -48,7 +48,7 @@ stages:
         variables:
           ResourceGroupName: '$(BaseResourceName)-arm-rg'
           ResourceName: '$(BaseResourceName)arm'
-          ClusterAdminGroupObjectIds: $[ dependencies.Prepare_Azure_Subscription.outputs['clusterAdminGroupObjectId'] ]
+          ClusterAdminGroupObjectIds: $[ dependencies.Prepare_Azure_Subscription.outputs['Create_Cluster_Admin_Group.clusterAdminGroupObjectId'] ]
         steps:
           - bash: |
               echo "ClusterAdminGroupObjectIds value is $(ClusterAdminGroupObjectIds)"
@@ -90,7 +90,7 @@ stages:
         variables:
           ResourceGroupName: '$(BaseResourceName)-bcp-rg'
           ResourceName: '$(BaseResourceName)bcp'
-          ClusterAdminGroupObjectIds: $[ dependencies.Prepare_Azure_Subscription.outputs['clusterAdminGroupObjectId'] ]
+          ClusterAdminGroupObjectIds: $[ dependencies.Prepare_Azure_Subscription.outputs['Create_Cluster_Admin_Group.clusterAdminGroupObjectId'] ]
         steps:
           - bash: |
               echo "ClusterAdminGroupObjectIds value is $(ClusterAdminGroupObjectIds)"
