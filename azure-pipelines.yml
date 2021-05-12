@@ -6,13 +6,13 @@ trigger:
 
 stages:
   - stage: Test
-    variables:
-      AzureSubscription: 'Azure Test Connection'
     jobs:
       - job: Prepare_Azure_Subscription
         displayName: 'Prepare Azure Subscription'
         pool:
           vmImage: vs2017-win2016
+        variables:
+          AzureSubscription: 'Azure Test Connection'
         steps:
           - task: AzurePowerShell@5
             name: Enable_Azure_Resource_Providers
@@ -48,6 +48,7 @@ stages:
         pool:
           vmImage: vs2017-win2016
         variables:
+          AzureSubscription: 'Azure Test Connection'
           ResourceGroupName: '$(BaseResourceName)-arm-rg'
           ResourceName: '$(BaseResourceName)arm'
           ClusterAdminGroupObjectIds: $[ dependencies.Prepare_Azure_Subscription.outputs['Create_Cluster_Admin_Group.clusterAdminGroupObjectId'] ]
@@ -87,6 +88,7 @@ stages:
         pool:
           vmImage: vs2017-win2016
         variables:
+          AzureSubscription: 'Azure Test Connection'
           ResourceGroupName: '$(BaseResourceName)-bcp-rg'
           ResourceName: '$(BaseResourceName)bcp'
           ClusterAdminGroupObjectIds: $[ dependencies.Prepare_Azure_Subscription.outputs['Create_Cluster_Admin_Group.clusterAdminGroupObjectId'] ]
