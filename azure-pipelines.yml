@@ -38,7 +38,7 @@ stages:
 
                 $clusterAdminGroupObjectId = New-ClusterAdminAadGroup -ResourceName $(BaseResourceName) -Verbose
 
-                Write-Host -Object "##vso[task.setvariable variable=clusterAdminGroupObjectId;isOutput=true]$clusterAdminGroupObjectId" -Verbose
+                Write-Host -Object "##vso[task.setvariable variable=clusterAdminGroupObjectId;isOutput=true]$clusterAdminGroupObjectId"
 
       - job: Test_Infrastructure_ARM
         displayName: 'Test Infrastructure with ARM'
