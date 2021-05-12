@@ -46,13 +46,13 @@ stages:
         pool:
           vmImage: vs2017-win2016
         variables:
-          - name: ResourceGroupName
-            value: '$(BaseResourceName)-arm-rg'
-          - name: ResourceName
-            value: '$(BaseResourceName)arm'
-          - name: ClusterAdminGroupObjectIds
-            value: $[ dependencies.Prepare_Azure_Subscription.outputs['clusterAdminGroupObjectId'] ]
+          ResourceGroupName: '$(BaseResourceName)-arm-rg'
+          ResourceName: '$(BaseResourceName)arm'
+          ClusterAdminGroupObjectIds: $[ dependencies.Prepare_Azure_Subscription.outputs['clusterAdminGroupObjectId'] ]
         steps:
+          - bash: |
+              echo "ClusterAdminGroupObjectIds value is $(ClusterAdminGroupObjectIds)"
+
           - task: AzureResourceManagerTemplateDeployment@3
             name: Deploy_Cluster_ARM
             displayName: 'Deploy Cluster with ARM'
@@ -88,13 +88,13 @@ stages:
         pool:
           vmImage: vs2017-win2016
         variables:
-          - name: ResourceGroupName
-            value: '$(BaseResourceName)-bicep-rg'
-          - name: ResourceName
-            value: '$(BaseResourceName)bicep'
-          - name: ClusterAdminGroupObjectIds
-            value: $[ dependencies.Prepare_Azure_Subscription.outputs['clusterAdminGroupObjectId'] ]
+          ResourceGroupName: '$(BaseResourceName)-bcp-rg'
+          ResourceName: '$(BaseResourceName)bcp'
+          ClusterAdminGroupObjectIds: $[ dependencies.Prepare_Azure_Subscription.outputs['clusterAdminGroupObjectId'] ]
         steps:
+          - bash: |
+              echo "ClusterAdminGroupObjectIds value is $(ClusterAdminGroupObjectIds)"
+
           - task: AzureResourceManagerTemplateDeployment@3
             name: Deploy_Cluster_ARM
             displayName: 'Deploy Cluster with ARM'
