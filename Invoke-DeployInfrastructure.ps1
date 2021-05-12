@@ -29,12 +29,8 @@ $clusterAdminGroupObjectId = New-ClusterAdminAadGroup -ResourceName $ResourceNam
 
 $templateFile = ($Method -eq 'ARM') ? './src/infrastructure/azuredeploy.json' : './src/infrastructure/main.bicep'
 
-$deployAzureResourceGroupAndInfrastructure_Parameters = $PSBoundParameters + {
-    ClusterAdminGroupObjectId = $clusterAdminGroupObjectId
-    TemplatePath = $templateFile
-}
-$deployAzureResourceGroupAndInfrastructure_Parameters.Remove('Method')
+$null = $PSBoundParameters.Add('ClusterAdminGroupObjectId', $clusterAdminGroupObjectId)
+$null = $PSBoundParameters.Add('TemplatePath', $templateFile)
+$null = $PSBoundParameters.Remove('Method')
 
-Deploy-AzureResourceGroupAndInfrastructure @PSBoundParameters `
-    -ClusterAdminGroupObjectId $clusterAdminGroupObjectId `
-    -TemplateFile $TemplateFile
+Deploy-AzureResourceGroupAndInfrastructure @PSBoundParameters
