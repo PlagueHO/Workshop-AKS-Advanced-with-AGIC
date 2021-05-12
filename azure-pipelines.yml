@@ -89,20 +89,20 @@ stages:
           ResourceName: '$(BaseResourceName)bcp'
           ClusterAdminGroupObjectIds: $[ dependencies.Prepare_Azure_Subscription.outputs['Create_Cluster_Admin_Group.clusterAdminGroupObjectId'] ]
         steps:
-          - task: AzureResourceManagerTemplateDeployment@3
-            name: Deploy_Cluster_ARM
-            displayName: 'Deploy Cluster with ARM'
+          - task: AzureCLI@2
+            name: Deploy_Cluster_Bicep
+            displayName: 'Deploy Cluster with Bicep'
             inputs:
-              deploymentScope: 'Resource Group'
-              azureResourceManagerConnection: 'Azure Test Connection'
-              subscriptionId: $(SubscriptionId)
-              action: 'Create Or Update Resource Group'
-              resourceGroupName: $(ResourceGroupName)
-              templateLocation: 'Linked artifact'
-              csmFile: 'src\infrastructure\main.bicep'
-              deploymentMode: 'Incremental'
-              location: $(Location)
-              overrideParameters: -name "$(ResourceName)" -clusterAdminGroupObjectIds [ "$(ClusterAdminGroupObjectIds)" ]
+              azureSubscription: $(azureSubscription)
+              scriptType: 'pscore'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az group create --name $(ResourceGroupName) --location $(Location)
+                az deployment group create  `
+                --template-file 'src\infrastructure\main.bicep'
+                --resource-group $(ResourceGroupName) `
+                --parameters name=$(ResourceName) `
+                --parameters clusterAdminGroupObjectIds=[ "$(ClusterAdminGroupObjectIds)" ]
 
           - task: AzurePowerShell@5
             name: Delete_Resource_Group_Bicep

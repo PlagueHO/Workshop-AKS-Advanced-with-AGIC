@@ -5,7 +5,7 @@
         // Base information
         "name": {
             "type": "string",
-            "defaultValue": "mykube",
+            "defaultValue": "[concat('mykube',uniqueString(resourceGroup().id))]",
             "metadata": {
                 "description": "The base name of the Kubernetes cluster and related resources."
             }
