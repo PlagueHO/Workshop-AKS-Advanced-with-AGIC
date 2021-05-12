@@ -62,7 +62,7 @@ stages:
                 az deployment group create `
                 --template-file 'src\infrastructure\azuredeploy.json' `
                 --resource-group $(ResourceGroupName) `
-                --parameters "{ \"name\": { \"value\": \"$(ResourceName)\" }, \"clusterAdminGroupObjectIds\": { \"value\": [ \"$(ClusterAdminGroupObjectIds)\" ] } }"
+                --parameters "{ `"name`": { `"value`": `"$(ResourceName)`" }, `"clusterAdminGroupObjectIds`": { `"value`": [ `"$(ClusterAdminGroupObjectIds)`" ] } }"
 
           - task: AzurePowerShell@5
             name: Delete_Resource_Group_AR
@@ -100,7 +100,7 @@ stages:
                 az deployment group create `
                 --template-file 'src\infrastructure\main.bicep' `
                 --resource-group $(ResourceGroupName) `
-                --parameters "{ \"name\": { \"value\": \"$(ResourceName)\" }, \"clusterAdminGroupObjectIds\": { \"value\": [ \"$(ClusterAdminGroupObjectIds)\" ] } }"
+                --parameters "{ `"name`": { `"value`": `"$(ResourceName)`" }, `"clusterAdminGroupObjectIds`": { `"value`": [ `"$(ClusterAdminGroupObjectIds)`" ] } }"
 
           - task: AzurePowerShell@5
             name: Delete_Resource_Group_Bicep
