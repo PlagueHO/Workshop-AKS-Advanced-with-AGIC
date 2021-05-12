@@ -63,7 +63,7 @@ stages:
                 --template-file 'src\infrastructure\azuredeploy.json' `
                 --resource-group $(ResourceGroupName) `
                 --parameters name=$(ResourceName) `
-                --parameters clusterAdminGroupObectIds=[ "$(ClusterAdminGroupObjectIds)" ]
+                --parameters clusterAdminGroupObjectIds=[ "$(ClusterAdminGroupObjectIds)" ]
 
           - task: AzurePowerShell@5
             name: Delete_Resource_Group_ARM
