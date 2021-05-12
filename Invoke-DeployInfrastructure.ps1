@@ -30,7 +30,7 @@ $clusterAdminGroupObjectId = New-ClusterAdminAadGroup -ResourceName $ResourceNam
 $templateFile = ($Method -eq 'ARM') ? './src/infrastructure/azuredeploy.json' : './src/infrastructure/main.bicep'
 
 $null = $PSBoundParameters.Add('ClusterAdminGroupObjectId', $clusterAdminGroupObjectId)
-$null = $PSBoundParameters.Add('TemplatePath', $templateFile)
+$null = $PSBoundParameters.Add('templateFile', $templateFile)
 $null = $PSBoundParameters.Remove('Method')
 
 Deploy-AzureResourceGroupAndInfrastructure @PSBoundParameters
