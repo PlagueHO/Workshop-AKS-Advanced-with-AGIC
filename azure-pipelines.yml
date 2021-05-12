@@ -7,8 +7,8 @@ trigger:
 stages:
   - stage: Test
     jobs:
-      - job: Test_Infrastructure
-        displayName: 'Test Infrastructure'
+      - job: Prepare_Azure_Subscription
+        displayName: 'Prepare Azure Subscription'
         pool:
           vmImage: vs2017-win2016
         steps:
@@ -40,9 +40,20 @@ stages:
 
                 echo "##vso[task.setvariable variable=clusterAdminGroupObjectId;isOutput=true]$clusterAdminGroupObjectId" -Verbose
 
+      - job: Test_Infrastructure_ARM
+        displayName: 'Test Infrastructure with ARM'
+        dependsOn: ['Prepare_Azure_Subscription']
+        pool:
+          vmImage: vs2017-win2016
+        variables:
+          - name: ResourceGroupName
+            value: '$(BaseResourceName)-arm-rg'
+          - name: ResourceName
+            value: '$(BaseResourceName)arm'
+        steps:
           - task: AzureResourceManagerTemplateDeployment@3
-            name: Deploy_Cluster_Resources
-            displayName: 'Deploy Cluster Resources'
+            name: Deploy_Cluster_ARM
+            displayName: 'Deploy Cluster with ARM'
             inputs:
               deploymentScope: 'Resource Group'
               azureResourceManagerConnection: 'Azure Test Connection'
@@ -56,9 +67,49 @@ stages:
               overrideParameters: -name "$(ResourceName)" -clusterAdminGroupObjectIds [ "$(Create_Cluster_Admin_Group.clusterAdminGroupObjectId)" ]
 
           - task: AzurePowerShell@5
-            name: Delete_Resource_Group
-            displayName: 'Delete Resource Group'
-            condition: always()
+            name: Delete_Resource_Group_ARM
+            displayName: 'Delete Resource Group ARM'
+            condition: succeeded()
+            inputs:
+              azureSubscription: 'Azure Test Connection'
+              pwsh: true
+              azurePowerShellVersion: LatestVersion
+              ScriptType: 'InlineScript'
+              Inline: |
+                Write-Verbose -Message 'Deleting resource group $(ResourceGroupName)' -Verbose
+
+                Remove-AzResourceGroup -ResourceGroupName $(ResourceGroupName) -Force
+
+      - job: Test_Infrastructure_Bicep
+        displayName: 'Test Infrastructure with Bicep'
+        dependsOn: ['Prepare_Azure_Subscription']
+        pool:
+          vmImage: vs2017-win2016
+        variables:
+          - name: ResourceGroupName
+            value: '$(BaseResourceName)-bicep-rg'
+          - name: ResourceName
+            value: '$(BaseResourceName)bicep'
+        steps:
+          - task: AzureResourceManagerTemplateDeployment@3
+            name: Deploy_Cluster_ARM
+            displayName: 'Deploy Cluster with ARM'
+            inputs:
+              deploymentScope: 'Resource Group'
+              azureResourceManagerConnection: 'Azure Test Connection'
+              subscriptionId: $(SubscriptionId)
+              action: 'Create Or Update Resource Group'
+              resourceGroupName: $(ResourceGroupName)
+              templateLocation: 'Linked artifact'
+              csmFile: 'src\infrastructure\main.bicep'
+              deploymentMode: 'Incremental'
+              location: $(Location)
+              overrideParameters: -name "$(ResourceName)" -clusterAdminGroupObjectIds [ "$(Create_Cluster_Admin_Group.clusterAdminGroupObjectId)" ]
+
+          - task: AzurePowerShell@5
+            name: Delete_Resource_Group_Bicep
+            displayName: 'Delete Resource Group Bicep'
+            condition: succeeded()
             inputs:
               azureSubscription: 'Azure Test Connection'
               pwsh: true
