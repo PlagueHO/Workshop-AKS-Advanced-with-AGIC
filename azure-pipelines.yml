@@ -36,7 +36,7 @@ stages:
               Inline: |
                 Import-Module -Name '.\src\infrastructure\azuredeploy.utilities\'
 
-                $clusterAdminGroupObjectId = New-ClusterAdminAadGroup -ResourceName $(ResourceName) -Verbose
+                $clusterAdminGroupObjectId = New-ClusterAdminAadGroup -ResourceName $(BaseResourceName) -Verbose
 
                 echo "##vso[task.setvariable variable=clusterAdminGroupObjectId;isOutput=true]$clusterAdminGroupObjectId" -Verbose
 
