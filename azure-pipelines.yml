@@ -50,9 +50,6 @@ stages:
           ResourceName: '$(BaseResourceName)arm'
           ClusterAdminGroupObjectIds: $[ dependencies.Prepare_Azure_Subscription.outputs['Create_Cluster_Admin_Group.clusterAdminGroupObjectId'] ]
         steps:
-          - bash: |
-              echo "ClusterAdminGroupObjectIds value is $(ClusterAdminGroupObjectIds)"
-
           - task: AzureResourceManagerTemplateDeployment@3
             name: Deploy_Cluster_ARM
             displayName: 'Deploy Cluster with ARM'
@@ -92,9 +89,6 @@ stages:
           ResourceName: '$(BaseResourceName)bcp'
           ClusterAdminGroupObjectIds: $[ dependencies.Prepare_Azure_Subscription.outputs['Create_Cluster_Admin_Group.clusterAdminGroupObjectId'] ]
         steps:
-          - bash: |
-              echo "ClusterAdminGroupObjectIds value is $(ClusterAdminGroupObjectIds)"
-
           - task: AzureResourceManagerTemplateDeployment@3
             name: Deploy_Cluster_ARM
             displayName: 'Deploy Cluster with ARM'
