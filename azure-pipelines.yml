@@ -6,8 +6,6 @@ trigger:
 
 stages:
   - stage: Test
-    variables:
-      AzureSubscription: 'Azure Test Connection'
     jobs:
       - job: Prepare_Azure_Subscription
         displayName: 'Prepare Azure Subscription'
@@ -18,7 +16,7 @@ stages:
             name: Enable_Azure_Resource_Providers
             displayName: 'Enable Azure Resource Providers'
             inputs:
-              azureSubscription: $(AzureSubscription)
+              azureSubscription: 'Azure Test Connection'
               pwsh: true
               azurePowerShellVersion: LatestVersion
               ScriptType: 'InlineScript'
@@ -31,7 +29,7 @@ stages:
             name: Create_Cluster_Admin_Group
             displayName: 'Create Cluster Admin Group'
             inputs:
-              azureSubscription: $(AzureSubscription)
+              azureSubscription: 'Azure Test Connection'
               pwsh: true
               azurePowerShellVersion: LatestVersion
               ScriptType: 'InlineScript'
@@ -56,7 +54,7 @@ stages:
             name: Deploy_Cluster_ARM
             displayName: 'Deploy Cluster with ARM'
             inputs:
-              azureSubscription: $(AzureSubscription)
+              azureSubscription: 'Azure Test Connection'
               scriptType: 'pscore'
               scriptLocation: 'inlineScript'
               inlineScript: |
@@ -72,7 +70,7 @@ stages:
             displayName: 'Delete Resource Group ARM'
             condition: succeeded()
             inputs:
-              azureSubscription: $(AzureSubscription)
+              azureSubscription: 'Azure Test Connection'
               pwsh: true
               azurePowerShellVersion: LatestVersion
               ScriptType: 'InlineScript'
@@ -95,7 +93,7 @@ stages:
             name: Deploy_Cluster_Bicep
             displayName: 'Deploy Cluster with Bicep'
             inputs:
-              azureSubscription: $(AzureSubscription)
+              azureSubscription: 'Azure Test Connection'
               scriptType: 'pscore'
               scriptLocation: 'inlineScript'
               inlineScript: |
@@ -111,7 +109,7 @@ stages:
             displayName: 'Delete Resource Group Bicep'
             condition: succeeded()
             inputs:
-              azureSubscription: $(AzureSubscription)
+              azureSubscription: 'Azure Test Connection'
               pwsh: true
               azurePowerShellVersion: LatestVersion
               ScriptType: 'InlineScript'
