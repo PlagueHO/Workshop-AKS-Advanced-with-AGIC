@@ -1,10 +1,18 @@
 #!/bin/sh
-export RESOURCEGROUPNAME="kubernetes-rg"
-export RESOURCENAME="mykube"
+export BASERESOURCENAME="mykube"
 export LOCATION="eastus"
 export ACTION="create"
-export TEMPLATEFILE="./src/infrastructure/azuredeploy.json"
+export METHOD="ARM"
 # export TEMPLATEFILE="./src/infrastructure/main.bicep"
+
+RESOURCEGROUPNAME="${BASERESOURCENAME}-${METHOD}-rg"
+RESOURCENAME="${BASERESOURCENAME}${METHOD}"
+
+if [ ${METHOD} = 'ARM' ]
+    TEMPLATEFILE="./src/infrastructure/azuredeploy.json"
+else
+    TEMPLATEFILE="./src/infrastructure/main.bicep"
+fi
 
 az provider register \
      --name Microsoft.ContainerService
