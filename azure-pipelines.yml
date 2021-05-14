@@ -95,6 +95,7 @@ stages:
           TemplateFile: './src/infrastructure/main.bicep'
         steps:
           - task: BicepInstall@0
+            displayName: 'Install Bicep CLI'
             inputs:
               version: 0.3.255
 
