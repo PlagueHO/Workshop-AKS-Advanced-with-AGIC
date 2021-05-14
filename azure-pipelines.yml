@@ -94,6 +94,16 @@ stages:
           ClusterAdminGroupObjectIds: $[ dependencies.Prepare_Azure_Subscription.outputs['Create_Cluster_Admin_Group.clusterAdminGroupObjectId'] ]
           TemplateFile: './src/infrastructure/main.bicep'
         steps:
+          - task: AzureCLI@2
+            name: Install_Bicep_CLI
+            displayName: 'Install Bicep CLI'
+            inputs:
+              azureSubscription: 'Azure Test Connection'
+              scriptType: ps
+              scriptLocation: inlineScript
+              inlineScript: |
+                az bicep install
+
           - task: AzurePowerShell@5
             name: Deploy_Cluster_Bicep
             displayName: 'Deploy Cluster with Bicep'
