@@ -2,17 +2,17 @@
 export BASERESOURCENAME="mykube"
 export LOCATION="eastus"
 export ACTION="create"
-export METHOD="ARM"
-# export TEMPLATEFILE="./src/infrastructure/main.bicep"
+export METHOD="ARM" ## "BICEP"
 
-RESOURCEGROUPNAME="${BASERESOURCENAME}-${METHOD,,}-rg"
-RESOURCENAME="${BASERESOURCENAME}${METHOD,,}"
-
-if [ ${METHOD} = 'ARM' ]; then
+if [ ${METHOD} = 'ARM' ]
+then
     TEMPLATEFILE="./src/infrastructure/azuredeploy.json"
 else
     TEMPLATEFILE="./src/infrastructure/main.bicep"
 fi
+
+RESOURCEGROUPNAME="${BASERESOURCENAME}-${METHOD,,}-rg"
+RESOURCENAME="${BASERESOURCENAME}${METHOD,,}"
 
 az provider register \
      --name Microsoft.ContainerService
