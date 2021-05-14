@@ -7,8 +7,8 @@ trigger:
 stages:
   - stage: Test
     jobs:
-      - job: Test_Infrastructure
-        displayName: 'Test Infrastructure'
+      - job: Prepare_Azure_Subscription
+        displayName: 'Prepare Azure Subscription'
         pool:
           vmImage: vs2017-win2016
         steps:
@@ -36,29 +36,91 @@ stages:
               Inline: |
                 Import-Module -Name '.\src\infrastructure\azuredeploy.utilities\'
 
-                $clusterAdminGroupObjectId = New-ClusterAdminAadGroup -ResourceName $(ResourceName) -Verbose
+                $clusterAdminGroupObjectId = New-ClusterAdminAadGroup -ResourceName $(BaseResourceName) -Verbose
 
-                echo "##vso[task.setvariable variable=clusterAdminGroupObjectId;isOutput=true]$clusterAdminGroupObjectId" -Verbose
+                Write-Host -Object "##vso[task.setvariable variable=clusterAdminGroupObjectId;isOutput=true]$clusterAdminGroupObjectId"
 
-          - task: AzureResourceManagerTemplateDeployment@3
-            name: Deploy_Cluster_Resources
-            displayName: 'Deploy Cluster Resources'
+      - job: Test_Infrastructure_ARM
+        displayName: 'Test Infrastructure with ARM'
+        dependsOn: ['Prepare_Azure_Subscription']
+        pool:
+          vmImage: vs2017-win2016
+        variables:
+          ResourceGroupName: '$(BaseResourceName)-arm-rg'
+          ResourceName: '$(BaseResourceName)arm'
+          ClusterAdminGroupObjectIds: $[ dependencies.Prepare_Azure_Subscription.outputs['Create_Cluster_Admin_Group.clusterAdminGroupObjectId'] ]
+          TemplateFile: './src/infrastructure/azuredeploy.json'
+        steps:
+          - task: AzurePowerShell@5
+            name: Deploy_Cluster_ARM
+            displayName: 'Deploy Cluster with ARM'
             inputs:
-              deploymentScope: 'Resource Group'
-              azureResourceManagerConnection: 'Azure Test Connection'
-              subscriptionId: $(SubscriptionId)
-              action: 'Create Or Update Resource Group'
-              resourceGroupName: $(ResourceGroupName)
-              templateLocation: 'Linked artifact'
-              csmFile: 'src\infrastructure\azuredeploy.json'
-              deploymentMode: 'Incremental'
-              location: $(Location)
-              overrideParameters: -name "$(ResourceName)" -clusterAdminGroupObjectIds [ "$(Create_Cluster_Admin_Group.clusterAdminGroupObjectId)" ]
+              azureSubscription: 'Azure Test Connection'
+              pwsh: true
+              azurePowerShellVersion: LatestVersion
+              ScriptType: 'InlineScript'
+              Inline: |
+                Import-Module -Name '.\src\infrastructure\azuredeploy.utilities\'
+
+                Deploy-AzureResourceGroupAndInfrastructure `
+                    -ResourceGroupName $(ResourceGroupName) `
+                    -ResourceName $(ResourceName) `
+                    -Location $(Location) `
+                    -ClusterAdminGroupObjectId $(ClusterAdminGroupObjectIds) `
+                    -TemplateFile $(TemplateFile)
 
           - task: AzurePowerShell@5
-            name: Delete_Resource_Group
-            displayName: 'Delete Resource Group'
-            condition: always()
+            name: Delete_Resource_Group_AR
+            displayName: 'Delete Resource Group ARM'
+            condition: succeeded()
+            inputs:
+              azureSubscription: 'Azure Test Connection'
+              pwsh: true
+              azurePowerShellVersion: LatestVersion
+              ScriptType: 'InlineScript'
+              Inline: |
+                Write-Verbose -Message 'Deleting resource group $(ResourceGroupName)' -Verbose
+
+                Remove-AzResourceGroup -ResourceGroupName $(ResourceGroupName) -Force
+
+      - job: Test_Infrastructure_Bicep
+        displayName: 'Test Infrastructure with Bicep'
+        dependsOn: ['Prepare_Azure_Subscription']
+        pool:
+          vmImage: vs2017-win2016
+        variables:
+          ResourceGroupName: '$(BaseResourceName)-bcp-rg'
+          ResourceName: '$(BaseResourceName)bcp'
+          ClusterAdminGroupObjectIds: $[ dependencies.Prepare_Azure_Subscription.outputs['Create_Cluster_Admin_Group.clusterAdminGroupObjectId'] ]
+          TemplateFile: './src/infrastructure/main.bicep'
+        steps:
+          - task: BicepInstall@0
+            displayName: 'Install Bicep CLI'
+            inputs:
+              version: 0.3.255
+
+          - task: AzurePowerShell@5
+            name: Deploy_Cluster_Bicep
+            displayName: 'Deploy Cluster with Bicep'
+            inputs:
+              azureSubscription: 'Azure Test Connection'
+              pwsh: true
+              azurePowerShellVersion: LatestVersion
+              ScriptType: 'InlineScript'
+              Inline: |
+                Import-Module -Name '.\src\infrastructure\azuredeploy.utilities\'
+
+                Deploy-AzureResourceGroupAndInfrastructure `
+                    -ResourceGroupName $(ResourceGroupName) `
+                    -ResourceName $(ResourceName) `
+                    -Location $(Location) `
+                    -ClusterAdminGroupObjectId $(ClusterAdminGroupObjectIds) `
+                    -TemplateFile $(TemplateFile)
+
+          - task: AzurePowerShell@5
+            name: Delete_Resource_Group_Bicep
+            displayName: 'Delete Resource Group Bicep'
+            condition: succeeded()
             inputs:
               azureSubscription: 'Azure Test Connection'
               pwsh: true

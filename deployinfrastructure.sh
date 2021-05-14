@@ -1,14 +1,28 @@
 #!/bin/sh
-export RESOURCEGROUPNAME="kubernetes-rg"
-export RESOURCENAME="mykube"
+export BASERESOURCENAME="mykube"
 export LOCATION="eastus"
 export ACTION="create"
+export METHOD="ARM" ## "BICEP"
+
+if [ ${METHOD} = 'ARM' ]
+then
+    TEMPLATEFILE="./src/infrastructure/azuredeploy.json"
+else
+    TEMPLATEFILE="./src/infrastructure/main.bicep"
+fi
+
+RESOURCEGROUPNAME="${BASERESOURCENAME}-${METHOD,,}-rg"
+RESOURCENAME="${BASERESOURCENAME}${METHOD,,}"
 
 az provider register \
      --name Microsoft.ContainerService
 
 az feature register \
     --name AAD-V2 \
+    --namespace Microsoft.ContainerService
+
+az feature register \
+    --name CustomKubeletIdentityPreview \
     --namespace Microsoft.ContainerService
 
 clusterAdminGroupObjectIds=$(az ad group create \
@@ -23,5 +37,5 @@ az group create \
 
 az deployment group $ACTION \
     --resource-group $RESOURCEGROUPNAME \
-    --template-file ./src/infrastructure/azuredeploy.json \
+    --template-file $TEMPLATEFILE \
     --parameters "{ \"name\": {\"value\": \"$RESOURCENAME\"}, \"clusterAdminGroupObjectIds\": {\"value\": [ $clusterAdminGroupObjectIds ]}}"

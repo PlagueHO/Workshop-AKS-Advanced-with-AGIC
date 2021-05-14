@@ -2,15 +2,16 @@
 param (
     [Parameter()]
     [System.String]
-    $ResourceGroupName = 'kubernetes-rg',
-
-    [Parameter()]
-    [System.String]
-    $ResourceName = 'mykube',
+    $BaseResourceName = 'mykube',
 
     [Parameter()]
     [System.String]
     $Location = 'eastus',
+
+    [Parameter()]
+    [ValidateSet('ARM','Bicep')]
+    [System.String]
+    $Method = 'ARM',
 
     [Parameter()]
     [switch]
@@ -21,4 +22,14 @@ Import-Module -Name '.\src\infrastructure\azuredeploy.utilities\' -Force
 
 Register-AzureResourceProviderAndFeature -Verbose:$VerbosePreference
 $clusterAdminGroupObjectId = New-ClusterAdminAadGroup -ResourceName $ResourceName -Verbose:$VerbosePreference
-Deploy-AzureResourceGroupAndInfrastructure @PSBoundParameters -ClusterAdminGroupObjectId $clusterAdminGroupObjectId
+
+$templateFile = ($Method -eq 'ARM') ? './src/infrastructure/azuredeploy.json' : './src/infrastructure/main.bicep'
+$resourceGroupName = "$($BaseResourceName)-$($Method.ToLower())-rg"
+$resourceName = "$($BaseResourceName)$($Method.ToLower())"
+
+Deploy-AzureResourceGroupAndInfrastructure `
+    -ResourceGroupName $resourceGroupName `
+    -ResourceName $resourceName `
+    -Location $Location `
+    -ClusterAdminGroupObjectId $clusterAdminGroupObjectId `
+    -TemplateFile $templateFile
