@@ -8,7 +8,7 @@ export METHOD="ARM"
 RESOURCEGROUPNAME="${BASERESOURCENAME}-${METHOD}-rg"
 RESOURCENAME="${BASERESOURCENAME}${METHOD}"
 
-if [ ${METHOD} = 'ARM' ]
+if [ ${METHOD} = 'ARM' ] then
     TEMPLATEFILE="./src/infrastructure/azuredeploy.json"
 else
     TEMPLATEFILE="./src/infrastructure/main.bicep"
