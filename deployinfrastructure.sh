@@ -5,8 +5,8 @@ export ACTION="create"
 export METHOD="ARM"
 # export TEMPLATEFILE="./src/infrastructure/main.bicep"
 
-RESOURCEGROUPNAME="${BASERESOURCENAME}-${METHOD}-rg"
-RESOURCENAME="${BASERESOURCENAME}${METHOD}"
+RESOURCEGROUPNAME="${BASERESOURCENAME}-${METHOD,,}-rg"
+RESOURCENAME="${BASERESOURCENAME}${METHOD,,}"
 
 if [ ${METHOD} = 'ARM' ]; then
     TEMPLATEFILE="./src/infrastructure/azuredeploy.json"
