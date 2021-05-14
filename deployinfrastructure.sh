@@ -21,6 +21,10 @@ az feature register \
     --name AAD-V2 \
     --namespace Microsoft.ContainerService
 
+az feature register \
+    --name CustomKubeletIdentityPreview \
+    --namespace Microsoft.ContainerService
+
 clusterAdminGroupObjectIds=$(az ad group create \
     --display-name ${RESOURCENAME}ClusterAdmin \
     --mail-nickname ${RESOURCENAME}ClusterAdmin \
